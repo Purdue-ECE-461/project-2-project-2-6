@@ -55,7 +55,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'urls'
+ROOT_URLCONF = 'package_registry.urls'
 
 TEMPLATES = [
     {
@@ -83,7 +83,7 @@ WSGI_APPLICATION = 'package_registry.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'project2',
+        'NAME': 'DB2',
         'USER': 'postgres',
         'PASSWORD': '1234',
         'HOST': 'localhost',

@@ -1,0 +1,19 @@
+[
+    {
+        "Version" : "1.1.1",
+        "Name" : "package1"
+    },
+    {
+        "Version" : "2.2.2",
+        "Name" : "package2"
+    },
+    {
+        "Version" : "3.3.3",
+        "Name" : "package3"
+    },
+    {
+        "": "asfa",
+        "Name" : "invalidPackage"
+    }
+
+]
