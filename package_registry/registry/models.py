@@ -3,14 +3,20 @@ from django.db import models
 
 # Create your models here.
 class PackageData(models.Model):
-    Content = models.TextField() #actual zip file
-    URL = models.CharField(max_length=500) #url of package
+    Content = models.TextField(blank=True) #actual zip file
+    URL = models.CharField(max_length=500, blank=True) #url of package
 
 
 class PackageMetadata(models.Model):
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['Name', 'Version'], name='unique_package')
+        ]
+
     ID = models.AutoField(primary_key=True)
-    Name = models.CharField(max_length=50, unique=True)
+    Name = models.CharField(max_length=50)
     Version = models.CharField(max_length=50)
+
 
 class Package(models.Model):
     data = models.ForeignKey(PackageData, on_delete=models.CASCADE)

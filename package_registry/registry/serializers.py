@@ -19,7 +19,7 @@ class PackageMetadataSerializer(serializers.ModelSerializer):
 class PackageDataSerializer(serializers.ModelSerializer):
     class Meta:
         model = PackageData
-        fields = '__all__'
+        fields = ['Content', 'URL']
 
     def update(self, instance, validated_data):
         instance.Content = validated_data.get('Content', instance.Content)
@@ -35,8 +35,10 @@ class PackageQuerySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class PackageSerializer(serializers.ModelSerializer):
+    data = PackageDataSerializer(read_only=True)
+    metadata = PackageMetadataSerializer(read_only=True)
+
     class Meta:
         model = Package
         fields = ('metadata', 'data')
-
 

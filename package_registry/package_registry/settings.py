@@ -83,7 +83,7 @@ WSGI_APPLICATION = 'package_registry.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'DB2',
+        'NAME': 'DB3',
         'USER': 'postgres',
         'PASSWORD': '1234',
         'HOST': 'localhost',
