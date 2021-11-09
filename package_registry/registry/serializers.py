@@ -35,10 +35,10 @@ class PackageQuerySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class PackageSerializer(serializers.ModelSerializer):
-    data = PackageDataSerializer(read_only=True)
-    metadata = PackageMetadataSerializer(read_only=True)
+    Data = PackageDataSerializer(read_only=True)
+    Metadata = PackageMetadataSerializer(read_only=True)
 
     class Meta:
         model = Package
-        fields = ('metadata', 'data')
+        fields = ('Metadata', 'Data')
 

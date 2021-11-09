@@ -26,7 +26,8 @@ def apiOverview(request):
 @api_view(['GET'])
 def packages_middleware(request):
     #Capturing offset query parameter
-    offset = request.GET.get('offset')
+    offset = request.GET.get('Offset')
+    print(offset)
     if offset is None:
         offset = 0
     else:
@@ -34,7 +35,6 @@ def packages_middleware(request):
 
     #capturing request body
     queries = request.data
-    print(queries)
     response = []
     if len(queries) < 1:
         return Response({'message: empty request body array'}, status=400)
@@ -48,8 +48,9 @@ def packages_middleware(request):
                         response.append(x)
                 else:
                     response.append({
-                        'message': 'query is missing at least one attribute'
+                        'message': 'query is missing at least one attribute - remember to check spelling and capitalization'
                     })
+
         paginator = Paginator(response, 10)
         try:
             return Response(paginator.page(offset + 1).object_list, headers={'Offset': offset + 1})
@@ -59,27 +60,35 @@ def packages_middleware(request):
 
 @api_view(['GET', 'PUT', 'DELETE'])
 def package_middleware(request, pk):
-
     try:
-        package = Package.objects.get(metadata__ID__exact=pk)
-        payload = request.data
+        package = Package.objects.get(Metadata__ID__exact=pk)
         if request.method == 'GET':
             serializer = PackageSerializer(package, many=False)
-            print(serializer.data)
             return Response(serializer.data, status=200)
         elif request.method == 'PUT':
-            if 'metadata' in payload and 'data' in payload:
-                serializer_metadata = PackageMetadataSerializer(data=payload['metadata'], many=False)
-                serializer_data = PackageDataSerializer(data=payload['data'], many=False)
+            payload = request.data
+            if 'Metadata' in payload and 'Data' in payload:
+
+                serializer_metadata = PackageMetadataSerializer(data=payload['Metadata'], many=False)
+                serializer_data = PackageDataSerializer(data=payload['Data'], many=False)
                 if serializer_data.is_valid(raise_exception=True) and serializer_metadata.is_valid(raise_exception=True):
-                    serializer_metadata.update(instance=package.metadata, validated_data=serializer_metadata.validated_data)
-                    serializer_data.update(instance=package.data, validated_data=serializer_data.validated_data)
+
+                    try:
+                        serializer_metadata.update(instance=package.Metadata, validated_data=serializer_metadata.validated_data)
+                    except django.db.utils.IntegrityError:
+                        return Response({"message": "duplicate key-value (Name, Version) violates uniqueness constraint"}, status=403)
+
+                    try:
+                        serializer_data.update(instance=package.Data, validated_data=serializer_data.validated_data)
+                    except django.db.utils.IntegrityError:
+                        return Response({"message": "both Content and URL must be included in query, but exactly one can be set"}, status=400)
+
                 return Response(status=200)
             else:
-                return Response({"message": "incorrect request body schema"}, status=400)
+                return Response({"message": "incorrect request body schema - remember to check spelling and capitalization"}, status=400)
         else:
             package.delete()
-            return Response(status=200)
+            return Response({"message": "package deleted"}, status=200)
 
     except registry.models.Package.DoesNotExist:
         return Response({"message": "package not found"}, status=400)
@@ -89,29 +98,36 @@ def package_middleware(request, pk):
 def create_package_middleware(request):
     payload = request.data
 
-    if 'metadata' in payload and 'data' in payload:
-        serializer_metadata = PackageMetadataSerializer(data=payload['metadata'], many=False)
-        serializer_data = PackageDataSerializer(data=payload['data'], many=False)
+    if 'Metadata' in payload and 'Data' in payload:
+
+        serializer_metadata = PackageMetadataSerializer(data=payload['Metadata'], many=False)
+        serializer_data = PackageDataSerializer(data=payload['Data'], many=False)
         if serializer_data.is_valid(raise_exception=True) and serializer_metadata.is_valid(raise_exception=True):
             try:
                 metadata = PackageMetadata.objects.create(Name=serializer_metadata.data.get('Name'), Version=serializer_metadata.data.get('Version'))
-                data = PackageData.objects.create(Content=serializer_data.data.get('Content'), URL=serializer_data.data.get('URL'))
-                Package.objects.create(data=data, metadata=metadata)
-                serializer_metadata = PackageMetadataSerializer(metadata, many=False)
-                return Response(serializer_metadata.data, status=200)
             except django.db.utils.IntegrityError:
                 return Response({"message": "duplicate key-value (Name, Version) violates uniqueness constraint"}, status=403)
+            try:
+                data = PackageData.objects.create(Content=serializer_data.data.get('Content'), URL=serializer_data.data.get('URL'))
+            except django.db.utils.IntegrityError:
+                metadata.delete()
+                return Response({"message": "both Content and URL must be included in query, but exactly one can be set"}, status=400)
+
+            Package.objects.create(Data=data, Metadata=metadata)
+            serializer_metadata = PackageMetadataSerializer(metadata, many=False)
+            return Response(serializer_metadata.data, status=200)
+
     else:
-        return Response({"message": "incorrect request body schema"}, status=400)
+        return Response({"message": "incorrect request body schema - remember to check spelling and capitalization"}, status=400)
 
 @api_view(['DELETE'])
 def byName_middleware(request, name):
     if name == '*':
         return Response({"message": "query name reserved"}, status=400)
 
-    querySet = Package.objects.filter(metadata__Name__iexact=name)
+    querySet = Package.objects.filter(Metadata__Name__iexact=name)
 
-    if len(list(querySet)) == 0:
+    if len(querySet) == 0:
         return Response({"message": "package not found"})
     else:
         for package in querySet:
