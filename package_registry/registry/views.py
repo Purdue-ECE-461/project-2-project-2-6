@@ -6,8 +6,6 @@ from django.core.paginator import Paginator, EmptyPage
 import registry.models
 from .serializers import *
 from .models import *
-import json
-
 
 # Create your views here.
 @api_view(['GET'])
@@ -131,7 +129,7 @@ def byName_middleware(request, name):
         return Response({"message": "package not found"})
     else:
         for package in querySet:
-            package.metadata.delete()
-            package.data.delete()
+            package.Metadata.delete()
+            package.Data.delete()
             package.delete()
         return Response(status=200)
