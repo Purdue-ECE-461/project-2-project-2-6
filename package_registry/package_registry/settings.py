@@ -25,7 +25,9 @@ SECRET_KEY = 'django-insecure-g2=e&!si45va)z=_vvk!h(xs!9r=cnzktz$pt-hpc3+s$2g##o
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'ece461-project2-6.uc.r.appspot.com'
+]
 
 
 # Application definition
@@ -81,12 +83,20 @@ WSGI_APPLICATION = 'package_registry.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.postgresql',
+    #     'NAME': 'DB3',
+    #     'USER': 'postgres',
+    #     'PASSWORD': '1234',
+    #     'HOST': 'localhost',
+    #     'PORT': '5432'
+    # }
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'DB3',
+        'NAME': 'npm-db',
         'USER': 'postgres',
-        'PASSWORD': '1234',
-        'HOST': 'localhost',
+        'PASSWORD': 'group6',
+        'HOST': '/cloudsql/ece461-project2-6:us-central1:npm-db',
         'PORT': '5432'
     }
 }
