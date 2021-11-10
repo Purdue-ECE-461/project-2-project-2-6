@@ -22,6 +22,7 @@ env_variables:
   DEBUG: 'True' # always False for deployment
 
 
+# ci/cd test
 
 # everything after /cloudsql/ can be found by entering >> gcloud sql instances describe DATABASE-NAME << in your Terminal
 # the DATABASE-NAME is the name you gave your project's PostgreSQL database
