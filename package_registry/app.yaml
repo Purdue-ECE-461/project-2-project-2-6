@@ -23,6 +23,7 @@ env_variables:
 
 
 # ci/cd test
+# ci/cd test2
 
 # everything after /cloudsql/ can be found by entering >> gcloud sql instances describe DATABASE-NAME << in your Terminal
 # the DATABASE-NAME is the name you gave your project's PostgreSQL database
