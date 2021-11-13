@@ -1,3 +1,8 @@
+# .\cloud_sql_proxy_x64.exe -instances=ece461-project2-6:us-central1:npm-db=tcp:3306
+
+import json
+from subprocess import Popen, PIPE, STDOUT
+
 import django.db.utils
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -24,10 +29,10 @@ def apiOverview(request):
 
 @api_view(['GET'])
 def packages_middleware(request):
-    print(request)
-    print(type(request))
-    print(request.data)
-    print(type(request.data))
+    body_unicode = request.body.decode('utf-8')
+    body_data = json.loads(body_unicode)
+    print('Type of body_data: {data}'.format(data=type(body_data)))
+    print('body_data: {dato}'.format(dato=body_data))
 
     # determine offset query parameter
     offset = request.GET.get('Offset')
@@ -38,15 +43,18 @@ def packages_middleware(request):
 
     # capturing request body
     response = []
-    queries = request.data
+    print('AAA')
+    body_unicode = request.body.decode('utf-8')
+    body_data = json.loads(body_unicode)
+    print('BBB')
 
-    if len(queries) < 1:
+    if len(body_data) < 1:
         return Response({'message: empty request body array'}, status=400)
     else:
-        if len(queries) == 1 and queries[0]['Name'] == '*':
+        if len(body_data) == 1 and body_data[0]['Name'] == '*':
             response = list(PackageMetadata.objects.all().values())
         else:
-            for query in queries:
+            for query in body_data:
                 if 'Name' in query.keys() and 'Version' in query.keys():
                     for x in list(PackageMetadata.objects.filter(Name__icontains=query['Name']).filter(
                             Version__contains=query['Version']).values()):
@@ -84,10 +92,11 @@ def package_middleware(request, pk):
                             serializer_data.update(instance=package.Data, validated_data=serializer_data.validated_data)
                         except django.db.utils.IntegrityError:
                             return Response(
-                                {"message": "both Content and URL must be included in query, but exactly one can be set"},
+                                {
+                                    "message": "both Content and URL must be included in query, but exactly one can be set"},
                                 status=400)
 
-                    return Response(status=200)
+                    return Response({"message": "package updated successfully"}, status=200)
             else:
                 return Response(
                     {"message": "incorrect request body schema - remember to check spelling and capitalization"},
@@ -150,4 +159,14 @@ def byName_middleware(request, name):
             package.Metadata.delete()
             package.Data.delete()
             package.delete()
-        return Response(status=200)
+        return Response({"message": "all versions of {n} were deleted".format(n=name)}, status=200)
+
+
+@api_view(['DELETE'])
+def reset_middleware(request):
+    process = Popen(args=['python', 'manage.py', 'flush'], stdout=PIPE, stdin=PIPE, stderr=PIPE)
+    return Response({"message": "successful database reset"})
+
+@api_view(['PUT'])
+def create_token_middleware(request):
+    return Response({"message": "this system does not support authentication"}, status=501)
