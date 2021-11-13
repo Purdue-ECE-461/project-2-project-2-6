@@ -165,8 +165,9 @@ def byName_middleware(request, name):
 @api_view(['DELETE'])
 def reset_middleware(request):
     process = Popen(args=['python', 'manage.py', 'flush'], stdout=PIPE, stdin=PIPE, stderr=PIPE)
+    stdout_data = process.communicate(input='yes'.encode())[0]
     return Response({"message": "successful database reset"})
 
 @api_view(['PUT'])
 def create_token_middleware(request):
-    return Response({"message": "this system does not support authentication"}, status=501)
+    return Response({"message": "this system does not support authentication... yet(?)"}, status=501)
