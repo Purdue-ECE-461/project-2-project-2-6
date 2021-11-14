@@ -1,9 +1,9 @@
 
 # CI/CD
 steps:
-- name: 'gcr.io/cloud-builders/git'
-  args: ['clone', '--recurse-submodules', 'https://github.com/Purdue-ECE-461/project-2-project-2-6', '.']
-  
+# - name: 'gcr.io/cloud-builders/git'
+#   args: ['clone', '--recurse-submodules', 'https://github.com/Purdue-ECE-461/project-2-project-2-6', '.']
+
 - name: "gcr.io/cloud-builders/gcloud"
-  args: ["app", "deploy"]
+  args: ["app", "deploy", "~/package_registry/app.yaml"]
 timeout: "1600s"
