@@ -3,8 +3,8 @@
 steps:
 # - name: 'gcr.io/cloud-builders/git'
 #   args: ['clone', '--recurse-submodules', 'https://github.com/Purdue-ECE-461/project-2-project-2-6', '.']
-
+# test
 - name: "gcr.io/cloud-builders/gcloud"
   # entrypoint: python
-  args: ["app", "deploy", "package_registry"]
+  args: ["app", "deploy", "package_registry/"]
 timeout: "1600s"
