@@ -4,8 +4,7 @@ from django.db import models
 # Create your models here.
 class PackageData(models.Model):
     Content = models.TextField(blank=True, null=True)  # actual zip file
-    URL = models.CharField(max_length=500, blank=True, null=True)  # url of package
-    print('test cicd')
+    URL = models.CharField(max_length=500, blank=True, null=True)
     # class Meta:
     #     constraints = [
     #         models.CheckConstraint(
