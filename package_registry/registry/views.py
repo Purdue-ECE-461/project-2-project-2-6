@@ -5,12 +5,12 @@ from subprocess import Popen, PIPE, STDOUT
 
 import django.db.utils
 
-from api import PackageParser
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.core.paginator import Paginator, EmptyPage
 
 import registry.models
+from .api import PackageParser
 from .serializers import *
 from .models import *
 

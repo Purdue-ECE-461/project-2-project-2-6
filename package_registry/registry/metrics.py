@@ -1,8 +1,7 @@
 import github
-import re
-import json
 from github import Github
-import cloning as cl
+
+from .cloning import rm_clone, get_clone
 import os
 import re
 import logging
@@ -111,7 +110,7 @@ def get_ramp_up_time(repos_url, repos_name):
         if (".eslintrc" in c.path):
             score += 0.1
     log.debug("Working on {0}".format(repos_name))
-    ret = cl.get_clone(repos_url)
+    ret = get_clone(repos_url)
     if ret == 1:
         if readme_name != "":
             readme_size = os.path.getsize("./repos/{0}".format(readme_name)) # I really wish there was a python linter for this
@@ -137,7 +136,7 @@ def get_ramp_up_time(repos_url, repos_name):
                 os.chdir("./node-v14.18.0-linux-x64/bin")
                 os.system("npx eslint ./../../repos --no-eslintrc --quiet > ../../tmp.log")
                 os.chdir("./../..")
-    cl.rm_clone()
+    rm_clone()
     ret = 0
     if os.path.isfile("./tmp.log"):
         with open("./tmp.log", "r") as fptr:

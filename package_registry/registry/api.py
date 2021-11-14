@@ -3,11 +3,11 @@ from django.db.utils import Error
 import requests
 import logging
 
-from bs4 import BeautifulSoup
 from github import Github
-from metrics import *
+from bs4 import BeautifulSoup
+from .metrics import *
 from os import environ
-from utils import readURLs, splitBaseURL_repo, unzipEncoded, parseJson
+from .utils import readURLs, splitBaseURL_repo, unzipEncoded, parseJson
 from soupsieve.util import lower
 
 log = logging.getLogger(__name__)

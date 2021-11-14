@@ -85,22 +85,22 @@ WSGI_APPLICATION = 'package_registry.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'npm-db',
-        'USER': 'postgres',
-        'PASSWORD': 'group6',
-        'HOST': '/cloudsql/ece461-project2-6:us-central1:npm-db',
-        'PORT': '5432'
-    }
     # 'default': {
     #     'ENGINE': 'django.db.backends.postgresql',
     #     'NAME': 'npm-db',
     #     'USER': 'postgres',
     #     'PASSWORD': 'group6',
-    #     'HOST': '127.0.0.1',
-    #     'PORT': '3306'
+    #     'HOST': '/cloudsql/ece461-project2-6:us-central1:npm-db',
+    #     'PORT': '5432'
     # }
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'npm-db',
+        'USER': 'postgres',
+        'PASSWORD': 'group6',
+        'HOST': '127.0.0.1',
+        'PORT': '3306'
+    }
 }
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = 4294967295  #4GB limit for storage

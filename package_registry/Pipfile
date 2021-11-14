@@ -7,6 +7,10 @@ name = "pypi"
 djangorestframework = "*"
 django = "*"
 django-cors-headers = "*"
+pygithub = "*"
+gitpython = "*"
+bs4 = "*"
+tqdm = "*"
 
 [dev-packages]
 
