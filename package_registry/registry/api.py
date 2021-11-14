@@ -16,10 +16,10 @@ token = environ.get('GITHUB_TOKEN')#'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'
 g = Github(token)
 
 class PackageParser():
-    def __init__(self, zip):
+    def __init__(self, zip, url):
         unzipEncoded(zip)
         self.data = parseJson()
-        self.url = data["repository"]["url"]
+        self.url = url
         stringBroken = splitBaseURL_repo(self.url) #stringBroken[0] = baseURL ; stringBroken[1] = repoName
         self.repoName = stringBroken[1]
 

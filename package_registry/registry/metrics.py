@@ -111,31 +111,33 @@ def get_ramp_up_time(repos_url, repos_name):
         if (".eslintrc" in c.path):
             score += 0.1
     log.debug("Working on {0}".format(repos_name))
-    if readme_name != "":
-        readme_size = os.path.getsize("./repos") # I really wish there was a python linter for this
-        if readme_size < 50:
-            score -= 0.1
-        elif readme_size < 1000 and readme_size > 500:
-            score += 0.1
-        elif readme_size < 5000:
-            score += 0.2
-        elif readme_size < 20000:
-            score += 0.3
-        elif readme_size < 45000:
-            score += 0.2
-        elif readme_size <= 70000:
-            score += 0.1
-        elif readme_size > 85000:
-            score -= 0.1
+    ret = cl.get_clone(repos_url)
+    if ret == 1:
+        if readme_name != "":
+            readme_size = os.path.getsize("./repos/{0}".format(readme_name)) # I really wish there was a python linter for this
+            if readme_size < 50:
+                score -= 0.1
+            elif readme_size < 1000 and readme_size > 500:
+                score += 0.1
+            elif readme_size < 5000:
+                score += 0.2
+            elif readme_size < 20000:
+                score += 0.3
+            elif readme_size < 45000:
+                score += 0.2
+            elif readme_size <= 70000:
+                score += 0.1
+            elif readme_size > 85000:
+                score -= 0.1
 
-        try:
-            if  os.system('npx eslint ./repos --no-eslintrc --quiet') != 0:
-                raise Exception("")
-        except:
-            os.chdir("./node-v14.18.0-linux-x64/bin")
-            os.system("npx eslint ./../../repos --no-eslintrc --quiet > ../../tmp.log")
-            os.chdir("./../..")
-    os.system("rm -rf ./repo/")
+            try:
+                if  os.system('npx eslint ./repos --no-eslintrc --quiet') != 0:
+                    raise Exception("")
+            except:
+                os.chdir("./node-v14.18.0-linux-x64/bin")
+                os.system("npx eslint ./../../repos --no-eslintrc --quiet > ../../tmp.log")
+                os.chdir("./../..")
+    cl.rm_clone()
     ret = 0
     if os.path.isfile("./tmp.log"):
         with open("./tmp.log", "r") as fptr:

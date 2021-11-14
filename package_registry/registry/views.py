@@ -112,7 +112,7 @@ def package_middleware(request, pk):
 def rate_package(request, pk):
     try:
         package = Package.objects.get(Metadata__ID__exact=str(pk))
-        data = PackageParser(package.Data.Content)
+        data = PackageParser(package.Data.Content, package.Data.URL)
         try:
             data.rate()
         except ValueError:
