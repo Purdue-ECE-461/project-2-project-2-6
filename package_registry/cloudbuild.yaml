@@ -1,6 +1,6 @@
 
 steps:
 - name: "gcr.io/cloud-builders/gcloud"
-  entrypoint: python3
+  entrypoint: package_registry.wsgi
   args: ["app", "deploy"]
 timeout: "1600s"
