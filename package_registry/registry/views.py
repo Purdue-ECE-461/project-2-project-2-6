@@ -29,14 +29,10 @@ def apiOverview(request):
     return Response(api_urls)
 
 
-@api_view(['GET'])
+@api_view(['POST'])
 def packages_middleware(request):
     print(request.body)
     print(request.body.decode('utf-8'))
-    # body_unicode = request.body.decode('utf-8')
-    # body_data = json.loads(body_unicode)
-    # print('Type of body_data: {data}'.format(data=type(body_data)))
-    # print('body_data: {dato}'.format(dato=body_data))
 
     # determine offset query parameter
     offset = request.GET.get('Offset')
@@ -47,11 +43,8 @@ def packages_middleware(request):
 
     # capturing request body
     response = []
-    print('AAA')
-    body_unicode = request.body.decode('utf-8')
-    print('BBB')
-    body_data = json.loads(body_unicode)
-    print('CCC')
+    body_data = request.data
+    print(body_data)
 
     if len(body_data) < 1:
         return Response({'message: empty request body array'}, status=400)
