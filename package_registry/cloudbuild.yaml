@@ -2,6 +2,5 @@
 # CI/CD
 steps:
 - name: "gcr.io/cloud-builders/gcloud"
-  # entrypoint: package_registry.wsgi
-  args: ["package_registry/manage.py", "deploy"]
+  args: ["app", "deploy"]
 timeout: "1600s"
