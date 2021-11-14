@@ -1,5 +1,5 @@
 
 steps:
-- name: "gcr.io/cloud-builders/gcloud/package_registry"
-  args: ["app", "deploy"]
+- name: "gcr.io/cloud-builders/gcloud"
+  args: ["package_registry/app", "deploy"]
 timeout: "1600s"
