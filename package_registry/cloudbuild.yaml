@@ -2,6 +2,6 @@
 # CI/CD
 steps:
 - name: "gcr.io/cloud-builders/gcloud"
-  entrypoint: gunicorn -b :$PORT package_registry.wsgi
-  args: ["app", "deploy"]
+  # entrypoint: package_registry.wsgi
+  args: ["package_registry/manage.py", "deploy"]
 timeout: "1600s"
