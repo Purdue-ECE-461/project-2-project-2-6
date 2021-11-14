@@ -29,6 +29,7 @@ class PackageDataSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         return PackageData(**validated_data)
+        
 class PackageQuerySerializer(serializers.ModelSerializer):
     class Meta:
         model = PackageQuery
@@ -42,3 +43,7 @@ class PackageSerializer(serializers.ModelSerializer):
         model = Package
         fields = ('Metadata', 'Data')
 
+class PackageRatingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PackageData
+        fields = '__all__'

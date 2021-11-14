@@ -4,6 +4,8 @@ import json
 from subprocess import Popen, PIPE, STDOUT
 
 import django.db.utils
+
+from api import PackageParser
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.core.paginator import Paginator, EmptyPage
@@ -113,6 +115,28 @@ def package_middleware(request, pk):
     except registry.models.Package.DoesNotExist:
         return Response({"message": "package not found"}, status=400)
 
+@api_view(['GET'])
+def rate_package(request, pk):
+    try:
+        package = Package.objects.get(Metadata__ID__exact=str(pk))
+        data = PackageParser(package.Data.Content)
+        try:
+            data.rate()
+        except ValueError:
+            return Response({"message": "The package rating system choked on at least one of the metrics."}, status=500)
+        
+        package_rating = PackageRating(BusFactor = data.contributor_score,
+                                       Correctness = data.correc_score,
+                                       GoodPinningPractice = data.pinned_dep_score,
+                                       LicenseScore = data.li_score,
+                                       RampUp = data.ramp_up_score,
+                                       ResponsiveMaintainer = data.respon_score)
+
+        serializer = PackageRatingSerializer(package_rating)
+        return Response(serializer.data, status=200)
+        
+    except registry.models.Package.DoesNotExist:
+        return Response({"message": "No such package."}, status=400)
 
 @api_view(['POST'])
 def create_package_middleware(request):

@@ -14,7 +14,6 @@ class PackageData(models.Model):
     #         )
     #     ]
 
-
 class PackageMetadata(models.Model):
     class Meta:
         constraints = [
