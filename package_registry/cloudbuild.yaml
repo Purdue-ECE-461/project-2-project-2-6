@@ -1,4 +1,5 @@
-
+- name: 'gcr.io/cloud-builders/git'
+  args: ['clone', '--recurse-submodules', 'https://github.com/Purdue-ECE-461/project-2-project-2-6', '.']
 # CI/CD
 steps:
 - name: "gcr.io/cloud-builders/gcloud"
