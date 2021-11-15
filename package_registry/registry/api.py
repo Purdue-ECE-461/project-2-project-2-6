@@ -7,7 +7,7 @@ from github import Github
 from bs4 import BeautifulSoup
 from .metrics import *
 from os import environ
-from .utils import readURLs, splitBaseURL_repo, unzipEncoded, parseJson
+from .utils import readURLs, splitBaseURL_repo, unzipEncoded, parseJson, fixUrl
 from soupsieve.util import lower
 
 log = logging.getLogger(__name__)
@@ -19,7 +19,11 @@ class PackageParser():
     def __init__(self, zip, url):
         unzipEncoded(zip)
         self.data = parseJson()
-        self.url = url
+        self.url = data["homepage"].strip()
+
+        if url is not None:
+            raise ValueError("WIP -- url should be none for now")
+
         stringBroken = splitBaseURL_repo(self.url) #stringBroken[0] = baseURL ; stringBroken[1] = repoName
         self.repoName = stringBroken[1]
 
@@ -38,7 +42,7 @@ class PackageParser():
         self.scores = [self.pinned_dep_score, self.ramp_up_score, self.correc_score, self.contributor_score, self.respon_score, self.li_score]
 
         for score in self.scores:
-            if score < 0.5:
+            if score == 0:
                 raise ValueError
                 
     def getLicenseScore (self):
