@@ -8,9 +8,9 @@ djangorestframework = "*"
 django = "*"
 django-cors-headers = "*"
 pygithub = "*"
-gitpython = "*"
 bs4 = "*"
 tqdm = "*"
+gitpython = "*"
 
 [dev-packages]
 

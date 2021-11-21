@@ -19,12 +19,7 @@ from .models import *
 @api_view(['GET'])
 def apiOverview(request):
     api_urls = {
-        'List': '/package-list/',
-        'Create': '/package-create/',
-        'Update': '/package-update/',
-        'Delete': '/package-delete/',
-        'Rate': '/package-rate/',
-        'Download': '/package-download/'
+        'message': 'follow API specifications to interact with system'
     }
     return Response(api_urls)
 
@@ -59,7 +54,8 @@ def packages_middleware(request):
                         response.append(x)
                 else:
                     response.append({
-                        'message': 'query {q} is missing at least one attribute - remember to check spelling and capitalization'.format(q=query)
+                        'message': 'query {q} is missing at least one attribute - remember to check spelling and capitalization'.format(
+                            q=query)
                     })
 
         paginator = Paginator(response, 10)
@@ -108,6 +104,7 @@ def package_middleware(request, pk):
     except registry.models.Package.DoesNotExist:
         return Response({"message": "package not found"}, status=400)
 
+
 @api_view(['GET'])
 def rate_package(request, pk):
     try:
@@ -117,19 +114,20 @@ def rate_package(request, pk):
             data.rate()
         except ValueError:
             return Response({"message": "The package rating system choked on at least one of the metrics."}, status=500)
-        
-        package_rating = PackageRating(BusFactor = data.contributor_score,
-                                       Correctness = data.correc_score,
-                                       GoodPinningPractice = data.pinned_dep_score,
-                                       LicenseScore = data.li_score,
-                                       RampUp = data.ramp_up_score,
-                                       ResponsiveMaintainer = data.respon_score)
+
+        package_rating = PackageRating(BusFactor=data.contributor_score,
+                                       Correctness=data.correc_score,
+                                       GoodPinningPractice=data.pinned_dep_score,
+                                       LicenseScore=data.li_score,
+                                       RampUp=data.ramp_up_score,
+                                       ResponsiveMaintainer=data.respon_score)
 
         serializer = PackageRatingSerializer(package_rating)
         return Response(serializer.data, status=200)
-        
+
     except registry.models.Package.DoesNotExist:
         return Response({"message": "No such package."}, status=400)
+
 
 @api_view(['POST'])
 def create_package_middleware(request):
@@ -187,6 +185,7 @@ def reset_middleware(request):
     process = Popen(args=['python', 'manage.py', 'flush'], stdout=PIPE, stdin=PIPE, stderr=PIPE)
     stdout_data = process.communicate(input='yes'.encode())[0]
     return Response({"message": "successful database reset"})
+
 
 @api_view(['PUT'])
 def create_token_middleware(request):
