@@ -1,4 +1,8 @@
+import django.contrib.auth.models
+from django.contrib.auth.hashers import make_password
 from rest_framework import serializers
+
+import registry.models
 from .models import *
 
 
@@ -16,6 +20,7 @@ class PackageMetadataSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         return PackageMetadata.objects.create()
 
+
 class PackageDataSerializer(serializers.ModelSerializer):
     class Meta:
         model = PackageData
@@ -29,11 +34,7 @@ class PackageDataSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         return PackageData(**validated_data)
-        
-class PackageQuerySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = PackageQuery
-        fields = '__all__'
+
 
 class PackageSerializer(serializers.ModelSerializer):
     Data = PackageDataSerializer(read_only=True)
@@ -43,7 +44,13 @@ class PackageSerializer(serializers.ModelSerializer):
         model = Package
         fields = ('Metadata', 'Data')
 
+
 class PackageRatingSerializer(serializers.ModelSerializer):
     class Meta:
         model = PackageData
         fields = '__all__'
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = django.contrib.auth.models.User
+        fields = ['username', 'is_staff']

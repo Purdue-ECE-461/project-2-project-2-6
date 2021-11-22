@@ -2,6 +2,7 @@
 
 import json
 from subprocess import Popen, PIPE, STDOUT
+from django.contrib.auth.models import User
 
 import django.db.utils
 
@@ -189,4 +190,20 @@ def reset_middleware(request):
 
 @api_view(['PUT'])
 def create_token_middleware(request):
-    return Response({"message": "this system does not support authentication... yet(?)"}, status=501)
+    payload = request.data
+    if 'User' in payload and 'Secret' in payload:
+        user = payload['User']
+        secret = payload['Secret']
+        if 'username' in user and 'password' in secret:
+            try:
+                user_instance = User.objects.get(username__exact=user['username'])
+                if not user_instance.check_password(secret['password']):
+                    return Response({'message': 'authentication failed - incorrect password'}, status=401)
+
+                return Response({'message': 'user exists'}, status=200)
+            except django.contrib.auth.models.User.DoesNotExist:
+                return Response({'message': 'authentication failed - user not found'}, status=401)
+        else:
+            return Response({'message': 'missing fields on request body --- remember to check spelling and capitalization'}, status=400)
+    else:
+        return Response({'message': 'incorrect request body schema --- remember to check spelling and capitalization'}, status=400)
