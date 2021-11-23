@@ -1,14 +1,13 @@
 # .\cloud_sql_proxy_x64.exe -instances=ece461-project2-6:us-central1:npm-db=tcp:3306
 
-import json
 from subprocess import Popen, PIPE, STDOUT
 from django.contrib.auth.models import User
-
 import django.db.utils
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.core.paginator import Paginator, EmptyPage
+import jwt, datetime
 
 import registry.models
 from .api import PackageParser
@@ -200,7 +199,14 @@ def create_token_middleware(request):
                 if not user_instance.check_password(secret['password']):
                     return Response({'message': 'authentication failed - incorrect password'}, status=401)
 
-                return Response({'message': 'user exists'}, status=200)
+                payload = {
+                    'id': user['username'],
+                    'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=10),
+                    'iat': datetime.datetime.utcnow()
+                }
+                token = jwt.encode(payload, 'secret', algorithm='HS256').decode('utf-8')
+
+                return Response({'message': 'user authenticated'}, status=200)
             except django.contrib.auth.models.User.DoesNotExist:
                 return Response({'message': 'authentication failed - user not found'}, status=401)
         else:
