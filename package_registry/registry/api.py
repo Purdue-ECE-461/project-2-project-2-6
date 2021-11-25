@@ -1,49 +1,70 @@
+from bs4 import BeautifulSoup
+from github import Github
+from os import environ
+
+from .metrics import *
+from package_registry.registry.cloning import get_clone, rm_clone
+from soupsieve.util import lower
+from .utils import readURLs, splitBaseURL_repo, unzipEncoded, parseJson, fixUrl
+
 import re
-from django.db.utils import Error
 import requests
 import logging
 
-from github import Github
-from bs4 import BeautifulSoup
-from .metrics import *
-from os import environ
-from .utils import readURLs, splitBaseURL_repo, unzipEncoded, parseJson, fixUrl
-from soupsieve.util import lower
 
 log = logging.getLogger(__name__)
 
-token = environ.get('GITHUB_TOKEN')#'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'
-g = Github(token)
+token = environ.get('GITHUB_TOKEN')
+token = "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"
 
 class PackageParser():
     def __init__(self, zip, url):
-        unzipEncoded(zip)
+        self.g = Github(token)
+
+        if zip is not None:
+            unzipEncoded(zip)
+            if "repository" in data:
+                self.url = data["repository"].strip()
+            else:
+                self.url = data["homepage"].strip()
+        else:
+            if "https://www.npmjs" in url:
+                url = fixUrl(url)
+            self.url = url
+            get_clone(self.url)
         self.data = parseJson()
-        self.url = data["homepage"].strip()
-
-        if url is not None:
-            raise ValueError("WIP -- url should be none for now")
-
         stringBroken = splitBaseURL_repo(self.url) #stringBroken[0] = baseURL ; stringBroken[1] = repoName
         self.repoName = stringBroken[1]
+        self.scores = []
+        self.contributor_score = 0
 
     def rate(self):
         #Do computation using the above values.!
         users = self.getUsers()
+
         self.contributor_score, contributors_count = self.getContributors(users) # bus_factor
+        self.scores.append(self.contributor_score)
 
         self.respon_score = self.getResponsivenessScore(contributors_count, users)
-        self.correc_score = get_correctness(self.repoName)
-        self.ramp_up_score = get_ramp_up_time(self.url, self.repoName)
-        self.li_score = self.getLicenseScore()
-        self.pinned_dep_score = get_pinned_dep_ratio(self.data["dependencies"])
-        # net_score = 0.1*ramp_up_score + 0.2*correc_score + 0.25*contributor_score + 0.15*respon_score + 0.3*li_score 
-        
-        self.scores = [self.pinned_dep_score, self.ramp_up_score, self.correc_score, self.contributor_score, self.respon_score, self.li_score]
+        self.scores.append(self.respon_score)
 
-        for score in self.scores:
-            if score == 0:
-                raise ValueError
+        self.correc_score = get_correctness(self.repoName)
+        self.scores.append(self.correc_score)
+
+        self.ramp_up_score = get_ramp_up_time(self.url, self.repoName)
+        self.scores.append(self.ramp_up_score)
+
+        self.li_score = self.getLicenseScore()
+        self.scores.append(self.li_score)
+
+        self.pinned_dep_score = get_pinned_dep_ratio(self.data)
+        self.scores.append(self.pinned_dep_score)
+    
+        rm_clone()
+
+        # for score in self.scores:
+        #     if score == 0:
+        #         raise ValueError
                 
     def getLicenseScore (self):
         #we have decided we dont care if a repo has licenses or not, we are only gonna grade it if they have a license.txt under which all the licenses should be mentioned.
@@ -55,7 +76,7 @@ class PackageParser():
         license = 0
         listOfLicensesFound = []
 
-        repo = g.get_repo(self.repoName)
+        repo = self.g.get_repo(self.repoName)
 
         #get_licenses is giving error..therefore have a try catch block.
         try:
@@ -111,7 +132,7 @@ class PackageParser():
         #https://github.com/pullreminders/backlog/issues/53 Used this link for ideas.!
         assignedScope = 0
 
-        repo = g.get_repo(self.repoName)
+        repo = self.g.get_repo(self.repoName)
         closedIssues = repo.get_issues(state='closed')
         totalCountOFClosedIssues = closedIssues.totalCount #number of closed issue tell us how much responsive the repo is.!
 
@@ -124,7 +145,6 @@ class PackageParser():
             assignedScope = 0.75 
         else:
             assignedScope = 1 
-
 
         #second factor (average of number of users who comments, pulls and reviewed the code)
         numComments = repo.get_comments().totalCount
@@ -142,7 +162,6 @@ class PackageParser():
             assignedScope = assignedScope + 0.75 
         else:
             assignedScope = assignedScope + 1 
-
 
         #thrid factor.! Number of users V/S Contributers will tell how much the ratio there is.!
         if (users == 0) :
@@ -179,20 +198,18 @@ class PackageParser():
                 users = int(newString[0])
 
         try:
-            repo = g.get_repo(self.repoName)
+            repo = self.g.get_repo(self.repoName)
             user_count = repo.get_contributors(anon=True).totalCount
         except:
             user_count = 0
-
         return max(users, user_count)
 
     def getContributors(self, users):
         try:
-            repo = g.get_repo(self.repoName)
+            repo = self.g.get_repo(self.repoName)
             contributors_count = repo.get_contributors(anon=True).totalCount
         except:
             contributors_count = int(max(1, .00002 * users))
-
         if contributors_count < 10:
             return 0.0, contributors_count
         elif contributors_count < 50:
@@ -205,10 +222,18 @@ class PackageParser():
             return 1.0, contributors_count
 
     def __str__(self):
-        for ele in self.scores:
-            print("{0} {1:.2f} {2:.2f} {3:.2f} {4:.2f} {5:.2f} {6:.2f}".format(*ele, sep=" "))
+        s = ""
+        for score in self.scores:
+            s += str(score) + " "
+        return s + "\n"
     
 
 if __name__=="__main__":
     urls = readURLs("Url.txt")
-    print(PackageParser(urls[0]).rate())
+    for url in urls:
+        try:
+            p = PackageParser(None, url)
+            p.rate()
+            print(p.scores)
+        except:
+            continue

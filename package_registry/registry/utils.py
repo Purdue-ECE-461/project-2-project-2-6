@@ -1,10 +1,11 @@
+from bs4 import BeautifulSoup
+
+import base64
+import json
+import os
 import requests
 import zipfile
-import json
-import base64
-import os
 
-from bs4 import BeautifulSoup
 
 def parseJson(file = "./repo/package.json"):
     f = open(file)

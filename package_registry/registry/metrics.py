@@ -1,15 +1,17 @@
-import github
-from github import Github
+from github import Github, GithubException
 
-from .cloning import rm_clone, get_clone
 import os
 import re
 import logging
+
+
 log = logging.getLogger(__name__)
 
+token = os.environ.get('GITHUB_TOKEN')
+token = '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'
+g = Github(token)
+
 def get_correctness(repos_name):
-    token = os.environ.get('GITHUB_TOKEN')
-    g = Github(token)
     git_repo = g.get_repo(repos_name)
     score = 0
     stars = git_repo.stargazers_count
@@ -52,7 +54,7 @@ def get_correctness(repos_name):
     try:
         try:
             branch = git_repo.get_branch("master")
-        except github.GithubException:
+        except GithubException:
             branch = git_repo.get_branch("main")
         if (branch.protected == True):
             score += 0.2
@@ -96,8 +98,6 @@ def get_correctness(repos_name):
     return score
 
 def get_ramp_up_time(repos_url, repos_name):
-    token = os.environ.get('GITHUB_TOKEN')
-    g = Github(token)
     repo = g.get_repo(repos_name)
     contents = repo.get_contents("")
     readme_name = ""
@@ -110,39 +110,32 @@ def get_ramp_up_time(repos_url, repos_name):
         if (".eslintrc" in c.path):
             score += 0.1
     log.debug("Working on {0}".format(repos_name))
-    ret = get_clone(repos_url)
-    if ret == 1:
-        if readme_name != "":
-            readme_size = os.path.getsize("./repos/{0}".format(readme_name)) # I really wish there was a python linter for this
-            if readme_size < 50:
-                score -= 0.1
-            elif readme_size < 1000 and readme_size > 500:
-                score += 0.1
-            elif readme_size < 5000:
-                score += 0.2
-            elif readme_size < 20000:
-                score += 0.3
-            elif readme_size < 45000:
-                score += 0.2
-            elif readme_size <= 70000:
-                score += 0.1
-            elif readme_size > 85000:
-                score -= 0.1
+    
+    if readme_name != "":
+        readme_size = os.path.getsize("./repo/{0}".format(readme_name)) # I really wish there was a python linter for this
+        if readme_size < 50:
+            score -= 0.1
+        elif readme_size < 1000 and readme_size > 500:
+            score += 0.1
+        elif readme_size < 5000:
+            score += 0.2
+        elif readme_size < 20000:
+            score += 0.3
+        elif readme_size < 45000:
+            score += 0.2
+        elif readme_size <= 70000:
+            score += 0.1
+        elif readme_size > 85000:
+            score -= 0.1
+    
+    os.system("npx eslint ./repo --no-eslintrc --quiet > ./tmp.log")
 
-            try:
-                if  os.system('npx eslint ./repos --no-eslintrc --quiet') != 0:
-                    raise Exception("")
-            except:
-                os.chdir("./node-v14.18.0-linux-x64/bin")
-                os.system("npx eslint ./../../repos --no-eslintrc --quiet > ../../tmp.log")
-                os.chdir("./../..")
-    rm_clone()
     ret = 0
     if os.path.isfile("./tmp.log"):
         with open("./tmp.log", "r") as fptr:
             eslint_out = fptr.read()
     if ret == 0:
-        re_list_eslint = re.findall(r"(?ms)^✖\s+\d+\s+problems\s+\((\d+).*?\)\s*$", eslint_out)
+        re_list_eslint = re.findall(r"problems\s+\((\d+).*?\)\s*$", eslint_out)
         num_errors = int(501 if not re_list_eslint else re_list_eslint[0])
         log.info("Number of detected errors: {0}".format(num_errors))
         if num_errors < 10:
@@ -160,23 +153,22 @@ def get_ramp_up_time(repos_url, repos_name):
         score = 0
     elif score > 1:
         score = 1
-    os.system("rm ./tmp.log")
+    os.remove("./tmp.log")
     return score
 
     
 def get_pinned_dep_ratio(data):
+    if "dependencies" not in data:
+        return 0
     pinned = 0
     total = 0
     pattern = re.compile(r"\d+.\d+.(\d+|X)")
-    for i in data:
+    for i in data["dependencies"]:
         total += 1
-        if re.match(pattern, data[i]) is not None:
+        if re.match(pattern, data["dependencies"][i]) is not None:
             pinned += 1
     return 0 if total == 0 else pinned / total
     
 if __name__=="__main__":
-    #s = get_correctness("intesso/async.js")
-    #s = get_ramp_up_time("https://github.com/jquery/jquery", "jquery/jquery")
-
     data = {"dependencies": {"pinned": "2.6.X", "pinned_2": "0.4.3", "unpinned": "~1.2.3"}}
-    print(get_pinned_dep_ratio(data["dependencies"]))
+    print(get_pinned_dep_ratio(data))
