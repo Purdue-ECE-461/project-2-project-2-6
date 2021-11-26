@@ -21,6 +21,14 @@ env_variables:
   SECRET_KEY: 'django-insecure-g2=e&!si45va)z=_vvk!h(xs!9r=cnzktz$pt-hpc3+s$2g##o' 
   DEBUG: 'True' # always False for deployment
 
+name: Deploy to App Engine
+uses: google-github-actions/deploy-appengine@v0.2.0
+with:
+  deliverables: app.yaml
+  project_id: ${{ secrets.GCP_PROJECT }}
+  credentials: ${{ secrets.GCP_SA_KEY }}
+  promote: false
+  version: v1
 
 # ci/cd test
 # ci/cd test2
@@ -51,3 +59,4 @@ runtime_config:
 # The settings below are to reduce costs during testing and are not appropriate
 # for production use. For more information, see:
 # https://cloud.google.com/appengine/docs/flexible/python/configuring-your-app-with-app-yaml
+
