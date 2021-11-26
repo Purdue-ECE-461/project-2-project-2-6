@@ -11,9 +11,10 @@ djangorestframework==3.12.4
 django-cors-headers==3.10.0
 psycopg2-binary==2.8.6
 pygithub==1.55
-gitpython==3.1.24
+gitpython~=3.1.18
+# gitdb
 
-openssl~=1.1.1l
+# openssl==1.1.1
 cryptography~=3.4.8
 sqlparse~=0.4.1
 psycopg2~=2.8.6
@@ -25,3 +26,4 @@ typing_extensions~=3.10.0.2
 idna~=3.2
 beautifulsoup4~=4.10.0
 soupsieve~=2.2.1
+tqdm~=4.60.0
