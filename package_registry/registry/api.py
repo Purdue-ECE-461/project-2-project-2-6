@@ -3,7 +3,7 @@ from github import Github
 from os import environ
 
 from .metrics import *
-from package_registry.registry.cloning import get_clone, rm_clone
+from .cloning import get_clone, rm_clone
 from soupsieve.util import lower
 from .utils import readURLs, splitBaseURL_repo, unzipEncoded, parseJson, fixUrl
 
@@ -15,7 +15,6 @@ import logging
 log = logging.getLogger(__name__)
 
 token = environ.get('GITHUB_TOKEN')
-token = "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"
 
 class PackageParser():
     def __init__(self, zip, url):
