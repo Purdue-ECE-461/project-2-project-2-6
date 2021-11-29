@@ -111,7 +111,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
-
+package_registry/benjamin/
 # Spyder project settings
 .spyderproject
 .spyproject
