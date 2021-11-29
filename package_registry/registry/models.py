@@ -1,10 +1,26 @@
 from django.db import models
 
-
 # Create your models here.
+from django.db.models import Q
+
+
 class PackageData(models.Model):
     Content = models.TextField(blank=True, null=True)  # actual zip file
     URL = models.CharField(max_length=500, blank=True, null=True)
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(
+                check=(
+                              Q(Content__isnull=False) &
+                              Q(URL__isnull=True)
+                      ) | (
+                              Q(Content__isnull=True) &
+                              Q(URL__isnull=False)
+                      ),
+                name='only_one_content_type',
+            )
+        ]
 
 
 class PackageMetadata(models.Model):

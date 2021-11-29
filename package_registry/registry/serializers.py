@@ -18,7 +18,7 @@ class PackageMetadataSerializer(serializers.ModelSerializer):
         return instance
 
     def create(self, validated_data):
-        return PackageMetadata.objects.create()
+        return PackageMetadata(**validated_data)
 
 
 class PackageDataSerializer(serializers.ModelSerializer):
@@ -53,4 +53,4 @@ class PackageRatingSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = django.contrib.auth.models.User
-        fields = ['username', 'is_staff']
+        fields = ['username']

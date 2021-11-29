@@ -4,6 +4,7 @@ import environ
 # Setting up local environment
 env = environ.Env()
 environ.Env.read_env()
+SECRET_KEY = env('SECRET')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -75,16 +76,16 @@ WSGI_APPLICATION = 'package_registry.wsgi.application'
 
 DATABASES = {
     # PRODUCTION
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.postgresql',
-    #     'NAME': env('PROD_DATABASE_NAME'),
-    #     'USER': env('PROD_DATABASE_USER'),
-    #     'PASSWORD': env('PROD_DATABASE_PASSWORD'),
-    #     'HOST': '/cloudsql/ece461-project2-6:us-central1:npm-db',
-    #     'PORT': '5432'
-    # }
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': env('PROD_DATABASE_NAME'),
+        'USER': env('PROD_DATABASE_USER'),
+        'PASSWORD': env('PROD_DATABASE_PASSWORD'),
+        'HOST': '/cloudsql/ece461-project2-6:us-central1:npm-db',
+        'PORT': '5432'
+    }
 
-    #PROXY CLOUDSQL
+    # PROXY CLOUDSQL
     # 'default': {
     #     'ENGINE': 'django.db.backends.postgresql',
     #     'NAME': env('PROD_DATABASE_NAME'),
@@ -95,14 +96,14 @@ DATABASES = {
     # }
 
     # DEVELOPMENT
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': env('DEV_DATABASE_NAME'),
-        'USER': env('DEV_DATABASE_USER'),
-        'PASSWORD': env('DEV_DATABASE_PASSWORD'),
-        'HOST': 'localhost',
-        'PORT': '5432'
-    }
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.postgresql',
+    #     'NAME': env('DEV_DATABASE_NAME'),
+    #     'USER': env('DEV_DATABASE_USER'),
+    #     'PASSWORD': env('DEV_DATABASE_PASSWORD'),
+    #     'HOST': 'localhost',
+    #     'PORT': '5432'
+    # }
 
 
 }
@@ -151,3 +152,6 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
