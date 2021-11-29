@@ -1,10 +1,9 @@
 from pathlib import Path
-import environ
 
 # Setting up local environment
-env = environ.Env()
-environ.Env.read_env()
-SECRET_KEY = env('SECRET')
+# env = environ.Env()
+# environ.Env.read_env()
+# SECRET_KEY = env('SECRET')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -76,24 +75,24 @@ WSGI_APPLICATION = 'package_registry.wsgi.application'
 
 DATABASES = {
     # PRODUCTION
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': env('PROD_DATABASE_NAME'),
-        'USER': env('PROD_DATABASE_USER'),
-        'PASSWORD': env('PROD_DATABASE_PASSWORD'),
-        'HOST': '/cloudsql/ece461-project2-6:us-central1:npm-db',
-        'PORT': '5432'
-    }
-
-    # PROXY CLOUDSQL
     # 'default': {
     #     'ENGINE': 'django.db.backends.postgresql',
-    #     'NAME': env('PROD_DATABASE_NAME'),
-    #     'USER': env('PROD_DATABASE_USER'),
-    #     'PASSWORD': env('PROD_DATABASE_PASSWORD'),
-    #     'HOST': '127.0.0.1',
-    #     'PORT': '3306'
+    #     'NAME': 'npm-db',
+    #     'USER': 'postgres',
+    #     'PASSWORD': 'group6',
+    #     'HOST': '/cloudsql/ece461-project2-6:us-central1:npm-db',
+    #     'PORT': '5432'
     # }
+
+    #PROXY CLOUDSQL
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'npm-db',
+        'USER': 'postgres',
+        'PASSWORD': 'group6',
+        'HOST': '127.0.0.1',
+        'PORT': '3306'
+    }
 
     # DEVELOPMENT
     # 'default': {
