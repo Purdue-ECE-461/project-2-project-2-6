@@ -13,7 +13,6 @@ psycopg2-binary==2.8.6
 pygithub==1.55
 gitpython~=3.1.18
 # gitdb
-#comment
 
 # openssl==1.1.1
 cryptography~=3.4.8
