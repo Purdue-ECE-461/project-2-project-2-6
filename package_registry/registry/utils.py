@@ -49,7 +49,6 @@ def splitBaseURL_repo(url):
     for i in range(0, occurrence):
         val = url.find(chartoSplitFrom, val + 1)
 
-    
     baseURL = url[0:val]
     repoName = url[val+1:len(url)]
 

@@ -8,7 +8,6 @@ import logging
 log = logging.getLogger(__name__)
 
 token = os.environ.get('GITHUB_TOKEN')
-token = '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'
 g = Github(token)
 
 def get_correctness(repos_name):
