@@ -81,7 +81,7 @@ DATABASES = {
         'NAME': 'npm-db',
         'USER': 'postgres',
         'PASSWORD': 'group6',
-        'HOST': '/cloudsql/ece461-project2-6:us-central1:npm-db',
+        'HOST': os.environ['PROD_DATABASE_PASSWORD'],
         'PORT': '5432'
     }
 
