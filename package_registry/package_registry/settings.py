@@ -73,14 +73,14 @@ WSGI_APPLICATION = 'package_registry.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-import os
+# import os
 DATABASES = {
     # PRODUCTION
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'npm-db',
         'USER': 'postgres',
-        'PASSWORD': os.environ['PROD_DATABASE_PASSWORD'],
+        'PASSWORD': 'group6,
         'HOST': '/cloudsql/ece461-project2-6:us-central1:npm-db',
         'PORT': '5432'
     }
