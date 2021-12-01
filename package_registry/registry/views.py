@@ -9,8 +9,8 @@ from django.contrib.auth.models import User
 from django.core.paginator import Paginator, EmptyPage
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from package_registry.registry.cloning import rm_clone
-from package_registry.registry.utils import encode, zip_and_encode, zipdir
+from .cloning import rm_clone
+from .utils import encode, zip_and_encode, zipdir
 
 import registry.models
 from .api import PackageParser
