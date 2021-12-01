@@ -7,16 +7,40 @@ import requests
 import zipfile
 
 
-def parseJson(file = "./repo/package.json"):
+def parseJson(file = "./repo"):
+    file = find("package.json", file)
+    if file is None:
+        return None
     f = open(file)
     return json.load(f)
 
-def unzipEncoded(encoded):
+def unzipEncoded(encoded, out = "./repo"):
     with open('output_file.zip', 'wb') as result:
         result.write(base64.b64decode(encoded))
     with zipfile.ZipFile('output_file.zip', 'r') as zip_ref:
-        zip_ref.extractall("./repo")
+        zip_ref.extractall(out)
     os.remove('output_file.zip')
+
+def zip_and_encode(zip_dir = "./repo", out = "./repo.zip"):
+    zipdir(zip_dir, out)
+    encoded_str = encode(out)
+    if os.path.exists(out):
+        os.remove(out)
+    return encoded_str
+
+def zipdir(zip_dir, out):
+    try:
+        zf = zipfile.ZipFile(out, "w")
+        for dirname, subdirs, files in os.walk(zip_dir):
+            zf.write(dirname)
+            for filename in files:
+                zf.write(os.path.join(dirname, filename))
+    finally:
+        zf.close()
+
+def encode(path):
+    with open(path, "rb") as result:
+        return base64.b64encode(result.read())
 
 def readURLs(filename, isTesting = False):
     #opening file and doing operations on file.
@@ -35,10 +59,6 @@ def readURLs(filename, isTesting = False):
 
 def sortPackages(packages):
     packages.sort(key=lambda x:x.scores[0], reverse=True) # sort descending
-
-def unzip(file):
-    with zipfile.ZipFile(file, 'r') as zip_ref:
-        zip_ref.extract("package.json")
 
 def splitBaseURL_repo(url):
     # doing string manuplation to break into repo and base url.
@@ -62,4 +82,10 @@ def fixUrl(url):
     for points in soup.find('a', class_="b2812e30 f2874b88 fw6 mb3 mt2 truncate black-80 f4 link"):
         point = str(points.text)
     return "https://" + point
+
+def find(name, path):
+    for root, dirs, files in os.walk(path):
+        if name in files:
+            return os.path.join(root, name)
+    return None
     
