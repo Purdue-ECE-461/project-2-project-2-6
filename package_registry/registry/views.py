@@ -192,7 +192,8 @@ def create_package_middleware(request):
                     for score in parse.scores:
                         if score < 0.5:
                             raise ValueError
-                cont = zip_and_encode()
+                    cont = zip_and_encode()
+                    
                 data = PackageData.objects.create(Content=cont,
                                                   URL=None)
             except django.db.utils.IntegrityError:

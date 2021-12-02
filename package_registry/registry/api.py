@@ -28,7 +28,14 @@ class PackageParser():
         self.li_score = 0
         self.pinned_dep_score = 0
 
-        if zip is not None:
+        if url is not None:
+            if "https://www.npmjs" in url:
+                url = fixUrl(url)
+            self.url = url
+            get_clone(self.url)
+            self.data = parseJson()
+
+        else:
             unzipEncoded(zip)
             self.data = parseJson()
             if self.data is None:
@@ -38,12 +45,6 @@ class PackageParser():
             else:
                 self.url = self.data["homepage"].strip()
 
-        if url is not None:
-            if "https://www.npmjs" in url:
-                url = fixUrl(url)
-            self.url = url
-            get_clone(self.url)
-            self.data = parseJson()
         stringBroken = splitBaseURL_repo(self.url) #stringBroken[0] = baseURL ; stringBroken[1] = repoName
         self.repoName = stringBroken[1]
         self.scores = []
