@@ -1,9 +1,5 @@
 from pathlib import Path
 
-# Setting up local environment
-# env = environ.Env()
-# environ.Env.read_env()
-# SECRET_KEY = env('SECRET')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
