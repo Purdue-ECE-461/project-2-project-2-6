@@ -4,9 +4,12 @@ import os
 import re
 import logging
 
+from .utils import find
+
 
 log = logging.getLogger(__name__)
 
+os.environ["GITHUB_TOKEN"] = "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"
 token = os.environ.get('GITHUB_TOKEN')
 g = Github(token)
 
@@ -111,7 +114,7 @@ def get_ramp_up_time(repos_url, repos_name):
     log.debug("Working on {0}".format(repos_name))
     
     if readme_name != "":
-        readme_size = os.path.getsize("./repo/{0}".format(readme_name)) # I really wish there was a python linter for this
+        readme_size = os.path.getsize(find(readme_name, "./repo")) # I really wish there was a python linter for this
         if readme_size < 50:
             score -= 0.1
         elif readme_size < 1000 and readme_size > 500:

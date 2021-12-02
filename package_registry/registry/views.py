@@ -10,6 +10,8 @@ from django.contrib.auth.models import User
 from django.core.paginator import Paginator, EmptyPage
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from .cloning import rm_clone
+from .utils import encode, zip_and_encode, zipdir
 
 import registry.models
 from .api import PackageParser
@@ -140,11 +142,13 @@ def rate_package(request, pk):
     # -------------------- ENDPOINT LOGIC --------------------
     try:
         package = Package.objects.get(Metadata__ID__exact=str(pk))
-        data = PackageParser(package.Data.Content, package.Data.URL)
         try:
+            data = PackageParser(package.Data.Content, package.Data.URL)
             data.rate()
         except:
             return Response({"message": "The package rating system choked on at least one of the metrics."}, status=500)
+        finally:
+            rm_clone()
 
         package_rating = PackageRating(BusFactor=data.contributor_score,
                                        Correctness=data.correc_score,
@@ -184,15 +188,33 @@ def create_package_middleware(request):
                 return Response({"message": "duplicate key-value (Name, Version) violates uniqueness constraint"},
                                 status=403)
             try:
-                data = PackageData.objects.create(Content=serializer_data.data.get('Content'),
-                                                  URL=serializer_data.data.get('URL'))
+                cont = serializer_data.data.get('Content')
+
+                if cont is None:
+                    parse = PackageParser(None, serializer_data.data.get('URL'))
+                    parse.rate()
+                    for score in parse.scores:
+                        if score < 0.5:
+                            raise ValueError
+                    cont = zip_and_encode()
+
+                data = PackageData.objects.create(Content=cont,
+                                                  URL=None)
             except django.db.utils.IntegrityError:
                 metadata.delete()
                 return Response(
                     {"message": "exactly one field in Data must be null"},
                     status=400
                 )
-
+            except:
+                metadata.delete()
+                return Response(
+                    {"message": "Malformed request."},
+                    status = 400
+                )
+            finally:
+                rm_clone()
+            
             Package.objects.create(Data=data, Metadata=metadata)
             serializer_metadata = PackageMetadataSerializer(metadata, many=False)
             return Response(serializer_metadata.data, status=200)

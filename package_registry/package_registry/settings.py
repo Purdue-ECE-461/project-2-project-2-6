@@ -72,7 +72,7 @@ WSGI_APPLICATION = 'package_registry.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-
+# import os
 DATABASES = {
     # PRODUCTION
     'default': {
@@ -97,9 +97,9 @@ DATABASES = {
     # DEVELOPMENT
     # 'default': {
     #     'ENGINE': 'django.db.backends.postgresql',
-    #     'NAME': 'devDB',
-    #     'USER': 'postgres',
-    #     'PASSWORD': '1234',
+    #     'NAME': "test",
+    #     'USER': "postgres",
+    #     'PASSWORD': "Dimpo123",
     #     'HOST': 'localhost',
     #     'PORT': '5432'
     # }

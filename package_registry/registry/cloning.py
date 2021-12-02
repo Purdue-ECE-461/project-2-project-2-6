@@ -39,6 +39,7 @@ def rm_clone(top = "./repo"):
   return 1
 
 def rmtree(top):
+  if os.path.isdir(top):
     for root, dirs, files in os.walk(top, topdown=False):
         for name in files:
             filename = os.path.join(root, name)
