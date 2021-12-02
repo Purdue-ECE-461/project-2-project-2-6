@@ -88,9 +88,9 @@ DATABASES = {
     # PROXY CLOUDSQL
     # 'default': {
     #     'ENGINE': 'django.db.backends.postgresql',
-    #     'NAME': env('PROD_DATABASE_NAME'),
-    #     'USER': env('PROD_DATABASE_USER'),
-    #     'PASSWORD': env('PROD_DATABASE_PASSWORD'),
+    #     'NAME': 'npm-db',
+    #     'USER': 'postgres',
+    #     'PASSWORD': 'group6',
     #     'HOST': '127.0.0.1',
     #     'PORT': '3306'
     # }
@@ -98,9 +98,15 @@ DATABASES = {
     # DEVELOPMENT
     # 'default': {
     #     'ENGINE': 'django.db.backends.postgresql',
+<<<<<<< HEAD
     #     'NAME': "test",
     #     'USER': "postgres",
     #     'PASSWORD': "Dimpo123",
+=======
+    #     'NAME': 'devDB',
+    #     'USER': 'postgres',
+    #     'PASSWORD': '1234',
+>>>>>>> benjamin
     #     'HOST': 'localhost',
     #     'PORT': '5432'
     # }
