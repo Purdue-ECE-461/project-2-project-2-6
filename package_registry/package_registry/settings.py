@@ -1,5 +1,4 @@
 from pathlib import Path
-import environ
 
 # Setting up local environment
 # env = environ.Env()
@@ -88,9 +87,9 @@ DATABASES = {
     # PROXY CLOUDSQL
     # 'default': {
     #     'ENGINE': 'django.db.backends.postgresql',
-    #     'NAME': env('PROD_DATABASE_NAME'),
-    #     'USER': env('PROD_DATABASE_USER'),
-    #     'PASSWORD': env('PROD_DATABASE_PASSWORD'),
+    #     'NAME': 'npm-db',
+    #     'USER': 'postgres',
+    #     'PASSWORD': 'group6',
     #     'HOST': '127.0.0.1',
     #     'PORT': '3306'
     # }
@@ -98,9 +97,9 @@ DATABASES = {
     # DEVELOPMENT
     # 'default': {
     #     'ENGINE': 'django.db.backends.postgresql',
-    #     'NAME': env('DEV_DATABASE_NAME'),
-    #     'USER': env('DEV_DATABASE_USER'),
-    #     'PASSWORD': env('DEV_DATABASE_PASSWORD'),
+    #     'NAME': 'devDB',
+    #     'USER': 'postgres',
+    #     'PASSWORD': '1234',
     #     'HOST': 'localhost',
     #     'PORT': '5432'
     # }
