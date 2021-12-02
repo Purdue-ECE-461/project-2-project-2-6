@@ -11,9 +11,13 @@ jobs:
   newman:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
-      - uses: matt-ball/newman-action@master
+      - name: Newman Action
+        # You may pin to the exact commit or the version.
+        # uses: matt-ball/newman-action@573e42a0a75f676336800aa40d7b63b2acdc4ff3
+        uses: matt-ball/newman-action@v1.0.2
         with:
-#           apiKey: ${{ secrets.postmanApiKey }}
+          # Postman API key
+#           apiKey: # optional
+          # Collection to use
           collection: PRODUCTION.postman_collection.json
-#           environment: 5922408-228c7edd-fc15-4f68-9665-a35d7df6945b
+          # Environment to use
