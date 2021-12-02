@@ -1,0 +1,683 @@
+{
+	"info": {
+		"_postman_id": "73187c23-6152-4967-bda0-ea02aa64850c",
+		"name": "PRODUCTION",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "create token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains Token\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"Token\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Set Token\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.environment.set(\"Token\", jsonData.Token);\r",
+							"});\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "X-Authorization",
+						"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6InRlc3R1c2VyMSIsImV4cCI6MTYzNzc0MTYwNSwiaWF0IjoxNjM3NzA1NjA1fQ.zNykzeukl6Z_oXzSqoAUFltKa9RxU347CnKco_9z_1Q",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"User\": {\r\n        \"username\": \"ece461defaultadminuser\"\r\n    },\r\n    \"Secret\": {\r\n        \"password\": \"correcthorsebatterystaple123(!__+@**(A\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://ece461-project2-6.uc.r.appspot.com/authenticate/",
+					"protocol": "http",
+					"host": [
+						"ece461-project2-6",
+						"uc",
+						"r",
+						"appspot",
+						"com"
+					],
+					"path": [
+						"authenticate",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create package",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"token = pm.environment.get('Token');\r",
+							"pm.request.headers.add({key: 'X-Authorization', value: token});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains Metadata\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"ID\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-Authorization",
+						"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6InRlc3R1c2VyMSIsImV4cCI6MTYzODM0NTM0NSwiaWF0IjoxNjM4MzA5MzQ1fQ.S3uNN-eGJTdgdZkVHUvW9ipdE1sYMhVj26HyJYyTS4o",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"Metadata\": {\r\n        \"ID\": \"ID1\",\r\n        \"Name\": \"PACKAGE1\",\r\n        \"Version\": \"1.0.0\"\r\n    },\r\n    \"Data\": {\r\n        \"Content\": \";alsfl;ahoiewfnsf\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://ece461-project2-6.uc.r.appspot.com/package/",
+					"protocol": "http",
+					"host": [
+						"ece461-project2-6",
+						"uc",
+						"r",
+						"appspot",
+						"com"
+					],
+					"path": [
+						"package",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get individual package",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"token = pm.environment.get('Token');\r",
+							"pm.request.headers.add({key: 'X-Authorization', value: token});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains Metadata\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"Metadata\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains Data\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"Data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Authorization",
+						"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImVjZTQ2MWRlZmF1bHRhZG1pbnVzZXIiLCJleHAiOjE2Mzg0NTM0NjAsImlhdCI6MTYzODQxNzQ2MH0.x70ocD6qqHcN4urBs0dFXp-yZccSdIrNvlrYerijtRw",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://ece461-project2-6.uc.r.appspot.com/package/ID1",
+					"protocol": "http",
+					"host": [
+						"ece461-project2-6",
+						"uc",
+						"r",
+						"appspot",
+						"com"
+					],
+					"path": [
+						"package",
+						"ID1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update individual package",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"token = pm.environment.get('Token');\r",
+							"pm.request.headers.add({key: 'X-Authorization', value: token});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains Metadata\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"Metadata\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains Data\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"Data\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "X-Authorization",
+						"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImVjZTQ2MWRlZmF1bHRhZG1pbnVzZXIiLCJleHAiOjE2Mzg0NTM0NjAsImlhdCI6MTYzODQxNzQ2MH0.x70ocD6qqHcN4urBs0dFXp-yZccSdIrNvlrYerijtRw",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"Metadata\": {\r\n        \"ID\": \"ID1\",\r\n        \"Name\": \"PACKAGE1\",\r\n        \"Version\": \"1.0.0\"\r\n    },\r\n    \"Data\": {\r\n        \"Content\": \"NEWCONTENT\",\r\n        \"URL\": null\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://ece461-project2-6.uc.r.appspot.com/package/ID1",
+					"protocol": "http",
+					"host": [
+						"ece461-project2-6",
+						"uc",
+						"r",
+						"appspot",
+						"com"
+					],
+					"path": [
+						"package",
+						"ID1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get all packages",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"token = pm.environment.get('Token');\r",
+							"pm.request.headers.add({key: 'X-Authorization', value: token});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-Authorization",
+						"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImVjZTQ2MWRlZmF1bHRhZG1pbnVzZXIiLCJleHAiOjE2Mzg0NTM0NjAsImlhdCI6MTYzODQxNzQ2MH0.x70ocD6qqHcN4urBs0dFXp-yZccSdIrNvlrYerijtRw",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[\r\n    {\r\n        \"Name\": \"*\",\r\n        \"Version\": \"\"\r\n    }\r\n]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://ece461-project2-6.uc.r.appspot.com/packages/?Offset=0",
+					"protocol": "http",
+					"host": [
+						"ece461-project2-6",
+						"uc",
+						"r",
+						"appspot",
+						"com"
+					],
+					"path": [
+						"packages",
+						""
+					],
+					"query": [
+						{
+							"key": "Offset",
+							"value": "0"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete individual package",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"token = pm.environment.get('Token');\r",
+							"pm.request.headers.add({key: 'X-Authorization', value: token});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "X-Authorization",
+						"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6InRlc3R1c2VyMSIsImV4cCI6MTYzODM0NzAxNSwiaWF0IjoxNjM4MzExMDE1fQ.h0LU-TsBWJWwD0PVSFGP83gTPjfsZfCpWKFCiWB-QbQ",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "http://ece461-project2-6.uc.r.appspot.com/package/ID1",
+					"protocol": "http",
+					"host": [
+						"ece461-project2-6",
+						"uc",
+						"r",
+						"appspot",
+						"com"
+					],
+					"path": [
+						"package",
+						"ID1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create second package",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"token = pm.environment.get('Token');\r",
+							"pm.request.headers.add({key: 'X-Authorization', value: token});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains Metadata\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"ID\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"Metadata\": {\r\n        \"ID\": \"ID2\",\r\n        \"Name\": \"PACKAGE2\",\r\n        \"Version\": \"1.0.0\"\r\n    },\r\n    \"Data\": {\r\n        \"Content\": \";alsfl;ahoiewfnsf\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://ece461-project2-6.uc.r.appspot.com/package/",
+					"protocol": "http",
+					"host": [
+						"ece461-project2-6",
+						"uc",
+						"r",
+						"appspot",
+						"com"
+					],
+					"path": [
+						"package",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create third package",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"token = pm.environment.get('Token');\r",
+							"pm.request.headers.add({key: 'X-Authorization', value: token});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains Metadata\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"ID\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"Metadata\": {\r\n        \"ID\": \"ID3\",\r\n        \"Name\": \"PACKAGE2\",\r\n        \"Version\": \"2.0.0\"\r\n    },\r\n    \"Data\": {\r\n        \"Content\": \";alsfl;ahoiewfnsf\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://ece461-project2-6.uc.r.appspot.com/package/",
+					"protocol": "http",
+					"host": [
+						"ece461-project2-6",
+						"uc",
+						"r",
+						"appspot",
+						"com"
+					],
+					"path": [
+						"package",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete all versions of package name",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"token = pm.environment.get('Token');\r",
+							"pm.request.headers.add({key: 'X-Authorization', value: token});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://ece461-project2-6.uc.r.appspot.com/package/byName/PACKAGE2",
+					"protocol": "http",
+					"host": [
+						"ece461-project2-6",
+						"uc",
+						"r",
+						"appspot",
+						"com"
+					],
+					"path": [
+						"package",
+						"byName",
+						"PACKAGE2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create package",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"token = pm.environment.get('Token');\r",
+							"pm.request.headers.add({key: 'X-Authorization', value: token});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains Metadata\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"ID\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"Metadata\": {\r\n        \"ID\": \"ID1\",\r\n        \"Name\": \"PACKAGE1\",\r\n        \"Version\": \"1.0.0\"\r\n    },\r\n    \"Data\": {\r\n        \"Content\": \";alsfl;ahoiewfnsf\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://ece461-project2-6.uc.r.appspot.com/package/",
+					"protocol": "http",
+					"host": [
+						"ece461-project2-6",
+						"uc",
+						"r",
+						"appspot",
+						"com"
+					],
+					"path": [
+						"package",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "rate package",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"token = pm.environment.get('Token');\r",
+							"pm.request.headers.add({key: 'X-Authorization', value: token});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(500);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://ece461-project2-6.uc.r.appspot.com/package/ID1/rate",
+					"protocol": "http",
+					"host": [
+						"ece461-project2-6",
+						"uc",
+						"r",
+						"appspot",
+						"com"
+					],
+					"path": [
+						"package",
+						"ID1",
+						"rate"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

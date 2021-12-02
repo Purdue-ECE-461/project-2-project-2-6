@@ -1,5 +1,6 @@
 # .\cloud_sql_proxy_x64.exe -instances=ece461-project2-6:us-central1:npm-db=tcp:3306
-
+import subprocess
+import time
 from subprocess import Popen, PIPE
 
 import datetime
@@ -60,7 +61,7 @@ def packages_middleware(request):
     body_data = request.data
 
     if len(body_data) < 1:
-        return Response({'message: empty request body array'}, status=400)
+        return Response({'message: empty query array'}, status=400)
     else:
         if len(body_data) == 1 and body_data[0]['Name'] == '*':
             response = list(PackageMetadata.objects.all().values())
@@ -78,9 +79,9 @@ def packages_middleware(request):
 
         paginator = Paginator(response, 10)
         try:
-            return Response(paginator.page(offset + 1).object_list, headers={'Offset': offset + 1})
+            return Response(paginator.page(offset + 1).object_list, status=200, headers={'Offset': offset + 1})
         except EmptyPage:
-            return Response(paginator.page(1).object_list, headers={'Offset': 2})
+            return Response(paginator.page(1).object_list, status=200, headers={'Offset': 2})
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
@@ -113,7 +114,8 @@ def package_middleware(request, pk):
                         except django.db.utils.IntegrityError:
                             return Response({"message": "exactly one field in Data must be null"}, status=500)
 
-                    return Response({"message": "package updated successfully"}, status=200)
+                    serializer = PackageSerializer(package, many=False)
+                    return Response(serializer.data, status=200)
             else:
                 return Response(
                     {"message": "incorrect request body schema - remember to check spelling and capitalization"},
@@ -257,9 +259,12 @@ def reset_middleware(request):
         return Response({'message': 'unauthenticated - invalid authentication token'}, status=401)
 
     # -------------------- ENDPOINT LOGIC --------------------
-    process = Popen(args=['python', 'manage.py', 'flush'], stdout=PIPE, stdin=PIPE, stderr=PIPE)
-    stdout_data = process.communicate(input='yes'.encode())[0]
-    return Response({"message": "successful database reset"})
+    try:
+        process = Popen(args=['python', 'manage.py', 'flush'], stdout=PIPE, stdin=PIPE, stderr=PIPE, shell=True)
+        stdout_data = process.communicate(input='yes'.encode())[0]
+        return Response({"message": "successful database reset"})
+    except subprocess.SubprocessError:
+        print('error')
 
 
 @api_view(['PUT'])
@@ -280,7 +285,7 @@ def create_token_middleware(request):
                     'iat': datetime.datetime.utcnow()
                 }
                 token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256')
-                return Response({'X-Authorization': token}, status=200)
+                return Response({'Token': token}, status=200)
             except django.contrib.auth.models.User.DoesNotExist:
                 return Response({'message': 'authentication failed - user not found'}, status=401)
         else:
