@@ -4,7 +4,7 @@ import os
 import re
 import logging
 
-from package_registry.registry.utils import find
+from .utils import find
 
 
 log = logging.getLogger(__name__)

@@ -140,11 +140,13 @@ def rate_package(request, pk):
     # -------------------- ENDPOINT LOGIC --------------------
     try:
         package = Package.objects.get(Metadata__ID__exact=str(pk))
-        data = PackageParser(package.Data.Content, package.Data.URL)
         try:
+            data = PackageParser(package.Data.Content, package.Data.URL)
             data.rate()
         except:
             return Response({"message": "The package rating system choked on at least one of the metrics."}, status=500)
+        finally:
+            rm_clone()
 
         package_rating = PackageRating(BusFactor=data.contributor_score,
                                        Correctness=data.correc_score,
@@ -193,7 +195,7 @@ def create_package_middleware(request):
                         if score < 0.5:
                             raise ValueError
                     cont = zip_and_encode()
-                    
+
                 data = PackageData.objects.create(Content=cont,
                                                   URL=None)
             except django.db.utils.IntegrityError:

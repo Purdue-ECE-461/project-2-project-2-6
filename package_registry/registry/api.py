@@ -5,7 +5,7 @@ from os import environ
 from .metrics import *
 from .cloning import get_clone, rm_clone
 from soupsieve.util import lower
-from .utils import readURLs, splitBaseURL_repo, unzipEncoded, parseJson, fixUrl
+from .utils import readURLs, splitBaseURL_repo, unzipEncoded, parseJson, fixUrl, zip_and_encode
 
 import re
 import requests
@@ -36,6 +36,7 @@ class PackageParser():
             self.data = parseJson()
 
         else:
+            rm_clone()
             unzipEncoded(zip)
             self.data = parseJson()
             if self.data is None:
@@ -239,9 +240,9 @@ class PackageParser():
 if __name__=="__main__":
     urls = readURLs("Url.txt")
     #for url in urls:
-    url = urls[0]
+    url = urls[1]
     print(url)
     p = PackageParser(None, url)
+    p = PackageParser(zip_and_encode(), None)
     p.rate()
-    print(p)
-
+    print(p.scores)
