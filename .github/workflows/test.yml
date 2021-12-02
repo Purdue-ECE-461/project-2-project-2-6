@@ -1,0 +1,19 @@
+name: Newman Run
+
+on:
+  # Triggers the workflow on push or pull request events but only for the main branch
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  newman:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - uses: matt-ball/newman-action@master
+        with:
+#           apiKey: ${{ secrets.postmanApiKey }}
+          collection: PRODUCTION.postman_collection.json
+#           environment: 5922408-228c7edd-fc15-4f68-9665-a35d7df6945b
