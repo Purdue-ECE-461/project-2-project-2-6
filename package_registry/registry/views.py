@@ -143,7 +143,7 @@ def rate_package(request, pk):
         data = PackageParser(package.Data.Content, package.Data.URL)
         try:
             data.rate()
-        except ValueError:
+        except:
             return Response({"message": "The package rating system choked on at least one of the metrics."}, status=500)
 
         package_rating = PackageRating(BusFactor=data.contributor_score,
