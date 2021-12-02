@@ -10,7 +10,7 @@ from django.core.paginator import Paginator, EmptyPage
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .cloning import rm_clone
-from .utils import encode, zip_and_encode, zipdir
+from .utils import zip_and_encode
 
 import registry.models
 from .api import PackageParser
@@ -141,10 +141,10 @@ def rate_package(request, pk):
     try:
         package = Package.objects.get(Metadata__ID__exact=str(pk))
         try:
-            data = PackageParser(package.Data.Content, package.Data.URL)
+            data = PackageParser(package.Data.Content, None)
             data.rate()
-        except:
-            return Response({"message": "The package rating system choked on at least one of the metrics."}, status=500)
+        except Exception as e:
+            return Response({"message": "The package rating system choked on at least one of the metrics. " + e}, status=500)
         finally:
             rm_clone()
 

@@ -5,7 +5,7 @@ from os import environ
 from .metrics import *
 from .cloning import get_clone, rm_clone
 from soupsieve.util import lower
-from .utils import readURLs, splitBaseURL_repo, unzipEncoded, parseJson, fixUrl, zip_and_encode
+from .utils import readURLs, splitBaseURL_repo, unzipEncoded, parseJson, fixUrl, zip_and_encode, strip_git
 
 import re
 import requests
@@ -14,7 +14,7 @@ import logging
 
 log = logging.getLogger(__name__)
 
-environ["GITHUB_TOKEN"] = "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"
+environ["GITHUB_TOKEN"] = "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"
 token = environ.get("GITHUB_TOKEN")
 
 class PackageParser():
@@ -28,23 +28,31 @@ class PackageParser():
         self.li_score = 0
         self.pinned_dep_score = 0
 
+        rm_clone()
         if url is not None:
             if "https://www.npmjs" in url:
                 url = fixUrl(url)
             self.url = url
             get_clone(self.url)
             self.data = parseJson()
-
         else:
-            rm_clone()
             unzipEncoded(zip)
             self.data = parseJson()
             if self.data is None:
                 raise ValueError
             if "repository" in self.data:
-                self.url = self.data["repository"].strip()
+                if isinstance(self.data["repository"], dict):
+                    self.url = strip_git(self.data["repository"]["url"])
+                else:
+                    self.url = strip_git(self.data["repository"])
+                if "https://github.com" not in self.url and "http://github.com" not in self.url:
+                    if "github.com" not in self.url:
+                        self.url = "github.com/" + self.url
+                    if "https://" not in self.url and "http://" not in self.url:
+                        self.url = "https://" + self.url
             else:
-                self.url = self.data["homepage"].strip()
+                raise ValueError
+            print(self.url)
 
         stringBroken = splitBaseURL_repo(self.url) #stringBroken[0] = baseURL ; stringBroken[1] = repoName
         self.repoName = stringBroken[1]
@@ -52,28 +60,28 @@ class PackageParser():
 
     def rate(self):
         #Do computation using the above values.!
-        try:
-            users = self.getUsers()
+        # try:
+        users = self.getUsers()
 
-            self.contributor_score, contributors_count = self.getContributors(users) # bus_factor
-            self.scores.append(round(self.contributor_score, 2))
+        self.contributor_score, contributors_count = self.getContributors(users) # bus_factor
+        self.scores.append(round(self.contributor_score, 2))
 
-            self.respon_score = self.getResponsivenessScore(contributors_count, users)
-            self.scores.append(round(self.respon_score, 2))
+        self.respon_score = self.getResponsivenessScore(contributors_count, users)
+        self.scores.append(round(self.respon_score, 2))
 
-            self.correc_score = get_correctness(self.repoName)
-            self.scores.append(round(self.correc_score, 2))
+        self.correc_score = get_correctness(self.repoName)
+        self.scores.append(round(self.correc_score, 2))
 
-            self.ramp_up_score = get_ramp_up_time(self.url, self.repoName)
-            self.scores.append(round(self.ramp_up_score, 2))
+        self.ramp_up_score = get_ramp_up_time(self.url, self.repoName)
+        self.scores.append(round(self.ramp_up_score, 2))
 
-            self.li_score = self.getLicenseScore()
-            self.scores.append(round(self.li_score, 2))
+        self.li_score = self.getLicenseScore()
+        self.scores.append(round(self.li_score, 2))
 
-            self.pinned_dep_score = get_pinned_dep_ratio(self.data)
-            self.scores.append(round(self.pinned_dep_score, 2))
-        except:
-            raise ValueError
+        self.pinned_dep_score = get_pinned_dep_ratio(self.data)
+        self.scores.append(round(self.pinned_dep_score, 2))
+        # except:
+        #     raise ValueError
                 
     def getLicenseScore (self):
         #we have decided we dont care if a repo has licenses or not, we are only gonna grade it if they have a license.txt under which all the licenses should be mentioned.
@@ -134,7 +142,7 @@ class PackageParser():
         else :
             return 1
             
-        #done final score for licenses will be returned.!   
+        # done final score for licenses will be returned.!   
 
 
     def getResponsivenessScore (self, contributors_count, users):
@@ -172,7 +180,7 @@ class PackageParser():
         else:
             assignedScope = assignedScope + 1 
 
-        #thrid factor.! Number of users V/S Contributers will tell how much the ratio there is.!
+        # thrid factor.! Number of users V/S Contributers will tell how much the ratio there is.!
         if (users == 0) :
             thirdFactor = 0
         else :
@@ -189,7 +197,7 @@ class PackageParser():
         else:
             assignedScope = assignedScope + 1
 
-        assignedScope = assignedScope / 3 #because we considered 3 factors.
+        assignedScope = assignedScope / 3 # because we considered 3 factors.
         return assignedScope
 
     def getUsers(self):
@@ -239,10 +247,14 @@ class PackageParser():
 
 if __name__=="__main__":
     urls = readURLs("Url.txt")
-    #for url in urls:
-    url = urls[1]
-    print(url)
-    p = PackageParser(None, url)
-    p = PackageParser(zip_and_encode(), None)
-    p.rate()
-    print(p.scores)
+    for url in urls:
+        try:
+            print(url)
+            #url = urls[0]
+            p = PackageParser(None, url)
+            #print(zip_and_encode())
+            p.rate()
+            print(p.scores)
+        except Exception as e:
+            print(e)
+

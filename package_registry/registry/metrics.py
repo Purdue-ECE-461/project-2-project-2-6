@@ -9,7 +9,7 @@ from .utils import find
 
 log = logging.getLogger(__name__)
 
-os.environ["GITHUB_TOKEN"] = "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"
+os.environ["GITHUB_TOKEN"] = "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"
 token = os.environ.get('GITHUB_TOKEN')
 g = Github(token)
 
