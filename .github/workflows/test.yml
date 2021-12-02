@@ -15,7 +15,7 @@ jobs:
       - uses: matt-ball/newman-action@master
         with:
           collection: PRODUCTION.postman_collection.json
-          environment: postman_environment.json
+#           environment: postman_environment.json
 
   
 
