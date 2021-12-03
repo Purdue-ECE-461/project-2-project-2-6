@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "73187c23-6152-4967-bda0-ea02aa64850c",
+		"_postman_id": "39c1f7c5-9620-4e93-af2f-cdda4266773d",
 		"name": "PRODUCTION",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -627,53 +627,6 @@
 					"path": [
 						"package",
 						""
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "rate package",
-			"event": [
-				{
-					"listen": "prerequest",
-					"script": {
-						"exec": [
-							"token = pm.environment.get('Token');\r",
-							"pm.request.headers.add({key: 'X-Authorization', value: token});"
-						],
-						"type": "text/javascript"
-					}
-				},
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 200\", function () {\r",
-							"    pm.response.to.have.status(500);\r",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://ece461-project2-6.uc.r.appspot.com/package/ID1/rate",
-					"protocol": "http",
-					"host": [
-						"ece461-project2-6",
-						"uc",
-						"r",
-						"appspot",
-						"com"
-					],
-					"path": [
-						"package",
-						"ID1",
-						"rate"
 					]
 				}
 			},
