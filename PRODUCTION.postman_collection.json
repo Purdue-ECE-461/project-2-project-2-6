@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "39c1f7c5-9620-4e93-af2f-cdda4266773d",
+		"_postman_id": "348197d3-263d-41c1-b31b-c663f4977861",
 		"name": "PRODUCTION",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -568,65 +568,6 @@
 						"package",
 						"byName",
 						"PACKAGE2"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "create package",
-			"event": [
-				{
-					"listen": "prerequest",
-					"script": {
-						"exec": [
-							"token = pm.environment.get('Token');\r",
-							"pm.request.headers.add({key: 'X-Authorization', value: token});"
-						],
-						"type": "text/javascript"
-					}
-				},
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Status code is 200\", function () {\r",
-							"    pm.response.to.have.status(200);\r",
-							"});\r",
-							"\r",
-							"pm.test(\"Response contains Metadata\", function () {\r",
-							"    pm.expect(pm.response.text()).to.include(\"ID\");\r",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"Metadata\": {\r\n        \"ID\": \"ID1\",\r\n        \"Name\": \"PACKAGE1\",\r\n        \"Version\": \"1.0.0\"\r\n    },\r\n    \"Data\": {\r\n        \"Content\": \";alsfl;ahoiewfnsf\"\r\n    }\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://ece461-project2-6.uc.r.appspot.com/package/",
-					"protocol": "http",
-					"host": [
-						"ece461-project2-6",
-						"uc",
-						"r",
-						"appspot",
-						"com"
-					],
-					"path": [
-						"package",
-						""
 					]
 				}
 			},
