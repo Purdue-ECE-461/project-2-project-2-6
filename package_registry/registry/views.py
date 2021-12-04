@@ -262,6 +262,7 @@ def reset_middleware(request):
     try:
         process = Popen(args=['python', 'manage.py', 'flush'], stdout=PIPE, stdin=PIPE, stderr=PIPE, shell=True)
         stdout_data = process.communicate(input='yes'.encode())[0]
+        process_status = process.wait()
         User.objects.create_superuser(username='ece461defaultadminuser', email='', password='correcthorsebatterystaple123(!__+@**(A')
         return Response({"message": "successful database reset"})
     except subprocess.SubprocessError:
