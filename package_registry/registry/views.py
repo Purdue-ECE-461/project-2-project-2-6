@@ -81,7 +81,7 @@ def packages_middleware(request):
         try:
             return Response(paginator.page(offset + 1).object_list, status=200, headers={'Offset': offset + 1})
         except EmptyPage:
-            return Response(paginator.page(1).object_list, status=200, headers={'Offset': 2})
+            return Response(paginator.page(1).object_list, status=200, headers={'Offset': 1})
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
@@ -256,11 +256,13 @@ def reset_middleware(request):
 
     # -------------------- ENDPOINT LOGIC --------------------
     try:
-        process = Popen(args=['python', 'manage.py', 'flush'], stdout=PIPE, stdin=PIPE, stderr=PIPE, shell=True)
+        process = Popen(args=['python', 'manage.py', 'flush'], stdout=PIPE, stdin=PIPE, stderr=PIPE, shell=False)
         stdout_data = process.communicate(input='yes'.encode())[0]
+        process_status = process.wait()
+        User.objects.create_superuser(username='ece461defaultadminuser', email='', password='correcthorsebatterystaple123(!__+@**(A')
         return Response({"message": "successful database reset"})
     except subprocess.SubprocessError:
-        print('error')
+        return Response({"message": "internal error while resetting database"})
 
 
 @api_view(['PUT'])
