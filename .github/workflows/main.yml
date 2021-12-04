@@ -21,6 +21,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+#         uses: actions/checkout@master
 
       - name: Deploy to App Engine
         id: deploy
@@ -32,10 +33,11 @@ jobs:
 
       - name: Show Output
         run: echo ${{ steps.deploy.outputs.url }}
+        
+      - name: Postman Test Suite
+        uses: matt-ball/newman-action@master
+        with:
+            collection: PRODUCTION.postman_collection.json
+            environment: Tests.postman_environment.json
+      
 
-#       - name: Install pytest
-#         run: |
-#           python -m pip install --upgrade pip
-#           pip install pytest
-#       - name: Run tests
-#         run: pytest tests/test*
