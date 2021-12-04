@@ -14,7 +14,6 @@ import logging
 
 log = logging.getLogger(__name__)
 
-environ["GITHUB_TOKEN"] = "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"
 token = environ.get("GITHUB_TOKEN")
 
 class PackageParser():
@@ -28,7 +27,6 @@ class PackageParser():
         self.li_score = 0
         self.pinned_dep_score = 0
 
-        rm_clone()
         if url is not None:
             if "https://www.npmjs" in url:
                 url = fixUrl(url)
@@ -60,28 +58,30 @@ class PackageParser():
 
     def rate(self):
         #Do computation using the above values.!
-        # try:
-        users = self.getUsers()
+        try:
+            users = self.getUsers()
 
-        self.contributor_score, contributors_count = self.getContributors(users) # bus_factor
-        self.scores.append(round(self.contributor_score, 2))
+            self.contributor_score, contributors_count = self.getContributors(users) # bus_factor
+            self.scores.append(self.contributor_score)
 
-        self.respon_score = self.getResponsivenessScore(contributors_count, users)
-        self.scores.append(round(self.respon_score, 2))
+            self.respon_score = self.getResponsivenessScore(contributors_count, users)
+            self.scores.append(self.respon_score)
 
-        self.correc_score = get_correctness(self.repoName)
-        self.scores.append(round(self.correc_score, 2))
+            self.correc_score = get_correctness(self.repoName)
+            self.scores.append(self.correc_score)
 
-        self.ramp_up_score = get_ramp_up_time(self.url, self.repoName)
-        self.scores.append(round(self.ramp_up_score, 2))
+            self.ramp_up_score = get_ramp_up_time(self.url, self.repoName)
+            self.scores.append(self.ramp_up_score)
 
-        self.li_score = self.getLicenseScore()
-        self.scores.append(round(self.li_score, 2))
+            self.li_score = self.getLicenseScore()
+            self.scores.append(self.li_score)
 
-        self.pinned_dep_score = get_pinned_dep_ratio(self.data)
-        self.scores.append(round(self.pinned_dep_score, 2))
-        # except:
-        #     raise ValueError
+            self.pinned_dep_score = get_pinned_dep_ratio(self.data)
+            self.scores.append(self.pinned_dep_score)
+        except:
+            raise ValueError
+        finally:
+            rm_clone()
                 
     def getLicenseScore (self):
         #we have decided we dont care if a repo has licenses or not, we are only gonna grade it if they have a license.txt under which all the licenses should be mentioned.

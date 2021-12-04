@@ -572,6 +572,215 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "reject ingestion of package",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"token = pm.environment.get('Token');\r",
+							"pm.request.headers.add({key: 'X-Authorization', value: token});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"\r"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"Metadata\": {\"Name\": \"package1\", \"Version\": \"1.0.0\", \"ID\": \"id1\"}, \"Data\": {\"URL\": \"https://github.com/cloudinary/cloudinary_npm\"}}", 
+					"options": {
+					"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://ece461-project2-6.uc.r.appspot.com/package/",
+					"protocol": "http",
+					"host": [
+						"ece461-project2-6",
+						"uc",
+						"r",
+						"appspot",
+						"com"
+					],
+					"path": [
+						"package",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ingest package",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"token = pm.environment.get('Token');\r",
+							"pm.request.headers.add({key: 'X-Authorization', value: token});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains Metadata\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"ID\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"Metadata\": {\"Name\": \"package0\", \"Version\": \"1.0.0\", \"ID\": \"id0\"}, \"Data\": {\"URL\": \"https://www.npmjs.com/package/express\"}}", 
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://ece461-project2-6.uc.r.appspot.com/package/",
+					"protocol": "http",
+					"host": [
+						"ece461-project2-6",
+						"uc",
+						"r",
+						"appspot",
+						"com"
+					],
+					"path": [
+						"package",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "rate successfully ingested package",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"token = pm.environment.get('Token');\r",
+							"pm.request.headers.add({key: 'X-Authorization', value: token});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://ece461-project2-6.uc.r.appspot.com/package/id0/rate",
+					"protocol": "http",
+					"host": [
+						"ece461-project2-6",
+						"uc",
+						"r",
+						"appspot",
+						"com"
+					],
+					"path": [
+						"package",
+						"id0",
+						"rate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "rate nonexistent package",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"token = pm.environment.get('Token');\r",
+							"pm.request.headers.add({key: 'X-Authorization', value: token});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://ece461-project2-6.uc.r.appspot.com/package/bad_ID/rate",
+					"protocol": "http",
+					"host": [
+						"ece461-project2-6",
+						"uc",
+						"r",
+						"appspot",
+						"com"
+					],
+					"path": [
+						"package",
+						"bad_ID",
+						"rate"
+					]
+				}
+			},
+			"response": []
 		}
 	]
 }

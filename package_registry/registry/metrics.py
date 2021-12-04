@@ -1,15 +1,12 @@
 from github import Github, GithubException
-
 import os
 import re
 import logging
-
 from .utils import find
 
 
 log = logging.getLogger(__name__)
 
-os.environ["GITHUB_TOKEN"] = "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"
 token = os.environ.get('GITHUB_TOKEN')
 g = Github(token)
 
@@ -171,6 +168,6 @@ def get_pinned_dep_ratio(data):
             pinned += 1
     return 0 if total == 0 else pinned / total
     
-if __name__=="__main__":
+if __name__== "__main__":
     data = {"dependencies": {"pinned": "2.6.X", "pinned_2": "0.4.3", "unpinned": "~1.2.3"}}
     print(get_pinned_dep_ratio(data))

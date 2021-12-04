@@ -145,8 +145,8 @@ def rate_package(request, pk):
         try:
             data = PackageParser(package.Data.Content, None)
             data.rate()
-        except Exception as e:
-            return Response({"message": "The package rating system choked on at least one of the metrics. " + e}, status=500)
+        except:
+            return Response({"message": "The package rating system choked on at least one of the metrics."}, status=500)
         finally:
             rm_clone()
 
@@ -198,20 +198,16 @@ def create_package_middleware(request):
                             raise ValueError
                     cont = zip_and_encode()
 
-                data = PackageData.objects.create(Content=cont,
-                                                  URL=None)
+                data = PackageData.objects.create(Content=cont, URL=None)
+
             except django.db.utils.IntegrityError:
                 metadata.delete()
-                return Response(
-                    {"message": "exactly one field in Data must be null"},
-                    status=400
-                )
-            except:
+                return Response({"message": "exactly one field in Data must be null"}, status=400)
+
+            except Exception:
                 metadata.delete()
-                return Response(
-                    {"message": "Malformed request."},
-                    status = 400
-                )
+                return Response({"message": "Malformed request. "}, status=400)
+
             finally:
                 rm_clone()
             

@@ -1,5 +1,4 @@
 from bs4 import BeautifulSoup
-
 import base64
 import json
 import os
@@ -24,10 +23,10 @@ def unzipEncoded(encoded, out = "./repo"):
 
 def zip_and_encode(zip_dir = "./repo", out = "test"):
     shutil.make_archive(out, "zip", zip_dir)
-    encoded_str = encode(out + ".zip")
+    encoded = encode(out + ".zip")
     if os.path.exists(out + ".zip"):
         os.remove(out + ".zip")
-    return encoded_str
+    return str(encoded)[2:-1]
 
 def encode(path):
     with open(path, "rb") as result:
