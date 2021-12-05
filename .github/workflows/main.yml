@@ -34,10 +34,11 @@ jobs:
           deliverables: package_registry/app.yaml   
           project_id: ${{ secrets.GCP_PROJECT }}
           credentials: ${{ secrets.GCP_SA_KEY }}
-        run: python -c "import os; print(os.environ)"
 
       - name: Show Output
-        run: echo ${{ steps.deploy.outputs.url }}
+        run: 
+          python -c "import os; print(os.environ)"
+          echo ${{ steps.deploy.outputs.url }}
         
       - name: Postman Test Suite
         uses: matt-ball/newman-action@master
