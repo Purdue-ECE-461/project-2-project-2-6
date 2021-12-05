@@ -1,11 +1,12 @@
 from pathlib import Path
-
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-g2=e&!si45va)z=_vvk!h(xs!9r=cnzktz$pt-hpc3+s$2g##o'
+PROD_DATABASE_PASSWORD = os.environ.get('PROD_DATABASE_PASSWORD')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -68,14 +69,14 @@ WSGI_APPLICATION = 'package_registry.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-# import os
+
 DATABASES = {
     # PRODUCTION
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'npm-db',
         'USER': 'postgres',
-        'PASSWORD': 'group6',
+        'PASSWORD': PROD_DATABASE_PASSWORD,
         'HOST': '/cloudsql/ece461-project2-6:us-central1:npm-db',
         'PORT': '5432'
     }
