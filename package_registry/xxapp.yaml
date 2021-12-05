@@ -21,7 +21,6 @@ env_variables:
   SECRET_KEY: 'django-insecure-g2=e&!si45va)z=_vvk!h(xs!9r=cnzktz$pt-hpc3+s$2g##o' 
   DEBUG: 'True' # always False for deployment
 
-
 # ci/cd test
 # ci/cd test2
 
