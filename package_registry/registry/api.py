@@ -14,7 +14,7 @@ import logging
 
 log = logging.getLogger(__name__)
 
-token = environ.get("GITHUB_TOKEN")
+token = environ.get("TOKEN")
 
 class PackageParser():
     def __init__(self, zip, url):
