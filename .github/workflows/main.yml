@@ -27,8 +27,8 @@ jobs:
           TOKEN: ${{ secrets.TOKEN }}
 
       - name: CHECK ENV VARS
-        run: python -c import os; print(os.environ.get("TOKEN"))
-        
+        run: python -c 'import os; print(os.environ.get("TOKEN"))'
+
       - name: Deploy to App Engine
         id: deploy
         uses: google-github-actions/deploy-appengine@v0.2.0
