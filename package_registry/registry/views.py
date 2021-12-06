@@ -199,15 +199,19 @@ def create_package_middleware(request):
                     cont = zip_and_encode()
 
                 data = PackageData.objects.create(Content=cont, URL=None)
-
+                
             except django.db.utils.IntegrityError:
                 metadata.delete()
-                return Response({"message": "exactly one field in Data must be null"}, status=400)
+                return Response({"message": "exactly one Data property must be set to null"}, status=400)
 
-            except Exception:
+            except TypeError:
                 metadata.delete()
-                return Response({"message": "Malformed request. "}, status=400)
+                return Response({"message": "malformed request"}, status=400)
 
+            except ValueError:
+                metadata.delete()
+                return Response({"message": "package cannot be ingested"}, status=200)
+            
             finally:
                 rm_clone()
             

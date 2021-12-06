@@ -76,7 +76,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'npm-db',
         'USER': 'postgres',
-        'PASSWORD': PROD_DATABASE_PASSWORD,
+        'PASSWORD': 'group6',
         'HOST': '/cloudsql/ece461-project2-6:us-central1:npm-db',
         'PORT': '5432'
     }

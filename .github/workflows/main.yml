@@ -36,9 +36,7 @@ jobs:
           credentials: ${{ secrets.GCP_SA_KEY }}
 
       - name: Show Output
-        run: 
-          python -c "import os; print(os.environ)"
-          echo ${{ steps.deploy.outputs.url }}
+        run: echo ${{ steps.deploy.outputs.url }}
         
       - name: Postman Test Suite
         uses: matt-ball/newman-action@master

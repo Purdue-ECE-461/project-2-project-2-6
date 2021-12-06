@@ -15,8 +15,7 @@ jobs:
         env:
           PROD_DATABASE_PASSWORD: ${{ secrets.PROD_DATABASE_PASSWORD }} 
           TOKEN: ${{ secrets.TOKEN }}
-        run: python -c "import os; print(os.environ)"
-        
+
       - uses: actions/checkout@master
       - uses: matt-ball/newman-action@master
         with:

@@ -14,7 +14,7 @@ import logging
 
 log = logging.getLogger(__name__)
 
-token = environ.get("TOKEN")
+token =  "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"#environ.get("TOKEN")
 
 class PackageParser():
     def __init__(self, zip, url):
@@ -78,8 +78,6 @@ class PackageParser():
 
             self.pinned_dep_score = get_pinned_dep_ratio(self.data)
             self.scores.append(self.pinned_dep_score)
-        except:
-            raise ValueError
         finally:
             rm_clone()
                 
@@ -246,15 +244,16 @@ class PackageParser():
     
 
 if __name__=="__main__":
-    urls = readURLs("Url.txt")
-    for url in urls:
-        try:
-            print(url)
-            #url = urls[0]
-            p = PackageParser(None, url)
-            #print(zip_and_encode())
-            p.rate()
-            print(p.scores)
-        except Exception as e:
-            print(e)
+    # urls = readURLs("Url.txt")
+    # for url in urls:
+    url = "https://github.com/jashkenas/underscore"
+    try:
+        print(url)
+        #url = urls[0]
+        p = PackageParser(None, url)
+        #print(zip_and_encode())
+        p.rate()
+        print(p.scores)
+    except Exception as e:
+        print(e)
 
