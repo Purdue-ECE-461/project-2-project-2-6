@@ -210,7 +210,7 @@ def create_package_middleware(request):
 
             except ValueError:
                 metadata.delete()
-                return Response({"message": "package cannot be ingested"}, status=200)
+                return Response({"message": "package cannot be ingested"}, status=400)
             
             finally:
                 rm_clone()
