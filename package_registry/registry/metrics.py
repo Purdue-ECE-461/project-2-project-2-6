@@ -7,7 +7,7 @@ from .utils import find
 
 log = logging.getLogger(__name__)
 
-token = "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"#os.environ.get('TOKEN')
+token = os.environ.get("TOKEN")
 g = Github(token)
 
 def get_correctness(repos_name):

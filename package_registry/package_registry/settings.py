@@ -76,7 +76,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'npm-db',
         'USER': 'postgres',
-        'PASSWORD': 'group6',
+        'PASSWORD': PROD_DATABASE_PASSWORD,
         'HOST': '/cloudsql/ece461-project2-6:us-central1:npm-db',
         'PORT': '5432'
     }
@@ -94,14 +94,12 @@ DATABASES = {
     # DEVELOPMENT
     # 'default': {
     #     'ENGINE': 'django.db.backends.postgresql',
-    #     'NAME': "devDB",
+    #     'NAME': "test",
     #     'USER': "postgres",
-    #     'PASSWORD': "1234",
+    #     'PASSWORD': "Dimpo123",
     #     'HOST': 'localhost',
     #     'PORT': '5432'
     # }
-
-
 }
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = 4294967295  #4GB limit for storage

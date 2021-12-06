@@ -63,7 +63,7 @@ def splitBaseURL_repo(url):
     repoName = url[val+1:len(url)]
 
     #returns baseURL and repoName.!
-    return baseURL,repoName
+    return baseURL, repoName
 
 def fixUrl(url):
     point = url

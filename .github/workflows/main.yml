@@ -25,9 +25,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: CHECK ENV VARS
-        run: python -c 'import os; print(os.environ)'
-
       - name: Deploy to App Engine
         id: deploy
         uses: google-github-actions/deploy-appengine@v0.2.0

@@ -3,7 +3,7 @@ from github import Github
 from os import environ
 
 from .metrics import *
-from .cloning import get_clone, rm_clone
+from .cloning import get_clone
 from soupsieve.util import lower
 from .utils import readURLs, splitBaseURL_repo, unzipEncoded, parseJson, fixUrl, zip_and_encode, strip_git
 
@@ -14,7 +14,7 @@ import logging
 
 log = logging.getLogger(__name__)
 
-token =  "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"#environ.get("TOKEN")
+token =  environ.get("TOKEN")
 
 class PackageParser():
     def __init__(self, zip, url):
@@ -58,28 +58,25 @@ class PackageParser():
 
     def rate(self):
         #Do computation using the above values.!
-        try:
-            users = self.getUsers()
+        users = self.getUsers()
 
-            self.contributor_score, contributors_count = self.getContributors(users) # bus_factor
-            self.scores.append(self.contributor_score)
+        self.contributor_score, contributors_count = self.getContributors(users) # bus_factor
+        self.scores.append(self.contributor_score)
 
-            self.respon_score = self.getResponsivenessScore(contributors_count, users)
-            self.scores.append(self.respon_score)
+        self.respon_score = self.getResponsivenessScore(contributors_count, users)
+        self.scores.append(self.respon_score)
 
-            self.correc_score = get_correctness(self.repoName)
-            self.scores.append(self.correc_score)
+        self.correc_score = get_correctness(self.repoName)
+        self.scores.append(self.correc_score)
 
-            self.ramp_up_score = get_ramp_up_time(self.url, self.repoName)
-            self.scores.append(self.ramp_up_score)
+        self.ramp_up_score = get_ramp_up_time(self.url, self.repoName)
+        self.scores.append(self.ramp_up_score)
 
-            self.li_score = self.getLicenseScore()
-            self.scores.append(self.li_score)
+        self.li_score = self.getLicenseScore()
+        self.scores.append(self.li_score)
 
-            self.pinned_dep_score = get_pinned_dep_ratio(self.data)
-            self.scores.append(self.pinned_dep_score)
-        finally:
-            rm_clone()
+        self.pinned_dep_score = get_pinned_dep_ratio(self.data)
+        self.scores.append(self.pinned_dep_score)
                 
     def getLicenseScore (self):
         #we have decided we dont care if a repo has licenses or not, we are only gonna grade it if they have a license.txt under which all the licenses should be mentioned.
@@ -244,16 +241,15 @@ class PackageParser():
     
 
 if __name__=="__main__":
-    # urls = readURLs("Url.txt")
+    urls = readURLs("Url.txt")
     # for url in urls:
-    url = "https://github.com/jashkenas/underscore"
     try:
-        print(url)
-        #url = urls[0]
+        url = urls[0]
+        #print(url)
         p = PackageParser(None, url)
-        #print(zip_and_encode())
-        p.rate()
-        print(p.scores)
+        print(zip_and_encode())
+        #p.rate()
+        #print(p.scores)
     except Exception as e:
         print(e)
 
