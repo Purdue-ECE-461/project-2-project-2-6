@@ -20,8 +20,8 @@ env_variables:
 # the secret key used for the Django app (from PROJECT-DIRECTORY/settings.py)
   SECRET_KEY: 'django-insecure-g2=e&!si45va)z=_vvk!h(xs!9r=cnzktz$pt-hpc3+s$2g##o' 
   DEBUG: 'True' # always False for deployment
-  TOKEN: $TOKEN
-  PROD_DATABASE_PASSWORD: $PROD_DATABASE_PASSWORD
+  TOKEN: ${TOKEN}
+  PROD_DATABASE_PASSWORD: 'group6'
 
 # name: Deploy to App Engine
 # uses: google-github-actions/deploy-appengine@v0.2.0
