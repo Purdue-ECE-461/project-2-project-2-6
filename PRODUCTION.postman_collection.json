@@ -1,10 +1,55 @@
 {
 	"info": {
-		"_postman_id": "348197d3-263d-41c1-b31b-c663f4977861",
-		"name": "PRODUCTION",
+		"_postman_id": "cf4dbecb-d2bb-48db-99d9-bdc740209810",
+		"name": "PRODUCTION Copy",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
+		{
+			"name": "reset databse Copy",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"token = pm.environment.get('Token');\r",
+							"pm.request.headers.add({key: 'X-Authorization', value: token});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://ece461-project2-6.uc.r.appspot.com/reset",
+					"protocol": "http",
+					"host": [
+						"ece461-project2-6",
+						"uc",
+						"r",
+						"appspot",
+						"com"
+					],
+					"path": [
+						"reset"
+					]
+				}
+			},
+			"response": []
+		},
 		{
 			"name": "create token",
 			"event": [
@@ -61,7 +106,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://ece461-project2-6.uc.r.appspot.com/authenticate/",
+					"raw": "http://ece461-project2-6.uc.r.appspot.com/authenticate",
 					"protocol": "http",
 					"host": [
 						"ece461-project2-6",
@@ -71,8 +116,7 @@
 						"com"
 					],
 					"path": [
-						"authenticate",
-						""
+						"authenticate"
 					]
 				}
 			},
@@ -127,7 +171,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://ece461-project2-6.uc.r.appspot.com/package/",
+					"raw": "http://ece461-project2-6.uc.r.appspot.com/package",
 					"protocol": "http",
 					"host": [
 						"ece461-project2-6",
@@ -137,8 +181,7 @@
 						"com"
 					],
 					"path": [
-						"package",
-						""
+						"package"
 					]
 				}
 			},
@@ -450,7 +493,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://ece461-project2-6.uc.r.appspot.com/package/",
+					"raw": "http://ece461-project2-6.uc.r.appspot.com/package",
 					"protocol": "http",
 					"host": [
 						"ece461-project2-6",
@@ -460,8 +503,7 @@
 						"com"
 					],
 					"path": [
-						"package",
-						""
+						"package"
 					]
 				}
 			},
@@ -509,7 +551,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://ece461-project2-6.uc.r.appspot.com/package/",
+					"raw": "http://ece461-project2-6.uc.r.appspot.com/package",
 					"protocol": "http",
 					"host": [
 						"ece461-project2-6",
@@ -519,8 +561,7 @@
 						"com"
 					],
 					"path": [
-						"package",
-						""
+						"package"
 					]
 				}
 			},
@@ -604,15 +645,15 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\"Metadata\": {\"Name\": \"package1\", \"Version\": \"1.0.0\", \"ID\": \"id1\"}, \"Data\": {\"URL\": \"https://github.com/cloudinary/cloudinary_npm\"}}", 
+					"raw": "{\"Metadata\": {\"Name\": \"package1\", \"Version\": \"1.0.0\", \"ID\": \"id1\"}, \"Data\": {\"URL\": \"https://github.com/cloudinary/cloudinary_npm\"}}",
 					"options": {
-					"raw": {
+						"raw": {
 							"language": "json"
 						}
 					}
 				},
 				"url": {
-					"raw": "http://ece461-project2-6.uc.r.appspot.com/package/",
+					"raw": "http://ece461-project2-6.uc.r.appspot.com/package",
 					"protocol": "http",
 					"host": [
 						"ece461-project2-6",
@@ -622,8 +663,7 @@
 						"com"
 					],
 					"path": [
-						"package",
-						""
+						"package"
 					]
 				}
 			},
@@ -663,7 +703,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\"Metadata\": {\"Name\": \"package0\", \"Version\": \"1.0.0\", \"ID\": \"id0\"}, \"Data\": {\"URL\": \"https://www.npmjs.com/package/express\"}}", 
+					"raw": "{\"Metadata\": {\"Name\": \"package0\", \"Version\": \"1.0.0\", \"ID\": \"id0\"}, \"Data\": {\"URL\": \"https://www.npmjs.com/package/express\"}}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -671,7 +711,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://ece461-project2-6.uc.r.appspot.com/package/",
+					"raw": "http://ece461-project2-6.uc.r.appspot.com/package",
 					"protocol": "http",
 					"host": [
 						"ece461-project2-6",
@@ -681,8 +721,7 @@
 						"com"
 					],
 					"path": [
-						"package",
-						""
+						"package"
 					]
 				}
 			},
@@ -777,6 +816,51 @@
 						"package",
 						"bad_ID",
 						"rate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "reset databse",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"token = pm.environment.get('Token');\r",
+							"pm.request.headers.add({key: 'X-Authorization', value: token});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://ece461-project2-6.uc.r.appspot.com/reset",
+					"protocol": "http",
+					"host": [
+						"ece461-project2-6",
+						"uc",
+						"r",
+						"appspot",
+						"com"
+					],
+					"path": [
+						"reset"
 					]
 				}
 			},
