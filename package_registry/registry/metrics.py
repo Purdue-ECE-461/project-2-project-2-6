@@ -169,7 +169,3 @@ def get_pinned_dep_ratio(data):
         if re.match(pattern, data["dependencies"][i]) is not None:
             pinned += 1
     return 0 if total == 0 else pinned / total
-    
-if __name__== "__main__":
-    data = {"dependencies": {"pinned": "2.6.X", "pinned_2": "0.4.3", "unpinned": "~1.2.3"}}
-    print(get_pinned_dep_ratio(data))

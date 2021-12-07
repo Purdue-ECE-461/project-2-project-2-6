@@ -239,17 +239,3 @@ class PackageParser():
         for score in self.scores:
             s += str(score) + " "
         return s + "\n"
-    
-
-if __name__=="__main__":
-    urls = readURLs("Url.txt")
-    # for url in urls:
-    try:
-        url = urls[0]
-        #print(url)
-        p = PackageParser(None, url)
-        print(zip_and_encode())
-        #p.rate()
-        #print(p.scores)
-    except Exception as e:
-        print(e)
