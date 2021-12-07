@@ -1,16 +1,15 @@
 from github import Github, GithubException
-
 import os
 import re
 import logging
-
+from dotenv import load_dotenv
 from .utils import find
 
 
 log = logging.getLogger(__name__)
 
-os.environ["GITHUB_TOKEN"] = "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"
-token = os.environ.get('GITHUB_TOKEN')
+load_dotenv()
+token = os.environ.get("TOKEN")
 g = Github(token)
 
 def get_correctness(repos_name):
@@ -170,7 +169,3 @@ def get_pinned_dep_ratio(data):
         if re.match(pattern, data["dependencies"][i]) is not None:
             pinned += 1
     return 0 if total == 0 else pinned / total
-    
-if __name__=="__main__":
-    data = {"dependencies": {"pinned": "2.6.X", "pinned_2": "0.4.3", "unpinned": "~1.2.3"}}
-    print(get_pinned_dep_ratio(data))

@@ -1,10 +1,10 @@
 from bs4 import BeautifulSoup
-
 import base64
 import json
 import os
 import requests
 import zipfile
+import shutil
 
 
 def parseJson(file = "./repo"):
@@ -12,7 +12,7 @@ def parseJson(file = "./repo"):
     if file is None:
         return None
     f = open(file)
-    return json.load(f)
+    return json.load(f)    
 
 def unzipEncoded(encoded, out = "./repo"):
     with open('output_file.zip', 'wb') as result:
@@ -21,22 +21,12 @@ def unzipEncoded(encoded, out = "./repo"):
         zip_ref.extractall(out)
     os.remove('output_file.zip')
 
-def zip_and_encode(zip_dir = "./repo", out = "./repo.zip"):
-    zipdir(zip_dir, out)
-    encoded_str = encode(out)
-    if os.path.exists(out):
-        os.remove(out)
-    return encoded_str
-
-def zipdir(zip_dir, out):
-    try:
-        zf = zipfile.ZipFile(out, "w")
-        for dirname, subdirs, files in os.walk(zip_dir):
-            zf.write(dirname)
-            for filename in files:
-                zf.write(os.path.join(dirname, filename))
-    finally:
-        zf.close()
+def zip_and_encode(zip_dir = "./repo", out = "test"):
+    shutil.make_archive(out, "zip", zip_dir)
+    encoded = encode(out + ".zip")
+    if os.path.exists(out + ".zip"):
+        os.remove(out + ".zip")
+    return str(encoded)[2:-1]
 
 def encode(path):
     with open(path, "rb") as result:
@@ -73,7 +63,7 @@ def splitBaseURL_repo(url):
     repoName = url[val+1:len(url)]
 
     #returns baseURL and repoName.!
-    return baseURL,repoName
+    return baseURL, repoName
 
 def fixUrl(url):
     point = url
@@ -89,3 +79,9 @@ def find(name, path):
             return os.path.join(root, name)
     return None
     
+def strip_git(s):
+    if s[:6] == "git://":
+        s = s[6:]
+    if s[-4:] == ".git":
+        s = s[:-4]
+    return s

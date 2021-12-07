@@ -18,29 +18,24 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     environment: prod
-
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-#         uses: actions/checkout@master
+      
+      - name: Generate dotenv
+        run: python generate_env.py ${{ secrets.ENV_VARS }}
 
       - name: Deploy to App Engine
         id: deploy
         uses: google-github-actions/deploy-appengine@v0.2.0
-#         env:
-#           PROD_DATABASE_PASSWORD2: ${{ secrets.PROD_DATABASE_PASSWORD2 }} 
+        
         with:
           deliverables: package_registry/app.yaml   
           project_id: ${{ secrets.GCP_PROJECT }}
           credentials: ${{ secrets.GCP_SA_KEY }}
-
-      - name: Show Output
-        run: echo ${{ steps.deploy.outputs.url }}
         
       - name: Postman Test Suite
         uses: matt-ball/newman-action@master
         with:
             collection: PRODUCTION.postman_collection.json
             environment: Tests.postman_environment.json
-      
-

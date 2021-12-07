@@ -40,9 +40,9 @@ class Package(models.Model):
 
 
 class PackageRating(models.Model):
-    BusFactor = models.DecimalField(max_digits=10, decimal_places=9)
-    Correctness = models.DecimalField(max_digits=10, decimal_places=9)
-    GoodPinningPractice = models.DecimalField(max_digits=10, decimal_places=9)
-    LicenseScore = models.DecimalField(max_digits=10, decimal_places=9)
-    RampUp = models.DecimalField(max_digits=10, decimal_places=9)
-    ResponsiveMaintainer = models.DecimalField(max_digits=10, decimal_places=9)
+    RampUp = models.DecimalField(max_digits=3, decimal_places=2)
+    Correctness = models.DecimalField(max_digits=3, decimal_places=2)
+    BusFactor = models.DecimalField(max_digits=3, decimal_places=2)
+    ResponsiveMaintainer = models.DecimalField(max_digits=3, decimal_places=2)
+    LicenseScore = models.DecimalField(max_digits=3, decimal_places=2)
+    GoodPinningPractice = models.DecimalField(max_digits=10, decimal_places=2)  

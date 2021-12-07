@@ -1,8 +1,6 @@
 import django.contrib.auth.models
 from django.contrib.auth.hashers import make_password
 from rest_framework import serializers
-
-import registry.models
 from .models import *
 
 
@@ -47,8 +45,8 @@ class PackageSerializer(serializers.ModelSerializer):
 
 class PackageRatingSerializer(serializers.ModelSerializer):
     class Meta:
-        model = PackageData
-        fields = '__all__'
+        model = PackageRating
+        fields = ("RampUp", "Correctness", "BusFactor", "ResponsiveMaintainer", "LicenseScore", "GoodPinningPractice")
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:

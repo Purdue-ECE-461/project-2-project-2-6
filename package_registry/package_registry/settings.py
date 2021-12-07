@@ -1,11 +1,15 @@
+from dotenv import load_dotenv
 from pathlib import Path
 import os
+
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-g2=e&!si45va)z=_vvk!h(xs!9r=cnzktz$pt-hpc3+s$2g##o'
+SECRET_KEY = os.environ.get("SECRET_KEY")
 PROD_DATABASE_PASSWORD = os.environ.get('PROD_DATABASE_PASSWORD')
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -16,7 +20,6 @@ ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1'
 ]
-
 
 # Application definition
 
@@ -76,7 +79,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'npm-db',
         'USER': 'postgres',
-        'PASSWORD': 'group6',
+        'PASSWORD': PROD_DATABASE_PASSWORD,
         'HOST': '/cloudsql/ece461-project2-6:us-central1:npm-db',
         'PORT': '5432'
     }
@@ -86,7 +89,7 @@ DATABASES = {
     #     'ENGINE': 'django.db.backends.postgresql',
     #     'NAME': 'npm-db',
     #     'USER': 'postgres',
-    #     'PASSWORD': 'group6',
+    #     'PASSWORD': PROD_DATABASE_PASSWORD,
     #     'HOST': '127.0.0.1',
     #     'PORT': '3306'
     # }
@@ -94,14 +97,12 @@ DATABASES = {
     # DEVELOPMENT
     # 'default': {
     #     'ENGINE': 'django.db.backends.postgresql',
-    #     'NAME': "devDB",
+    #     'NAME': "test",
     #     'USER': "postgres",
-    #     'PASSWORD': "1234",
+    #     'PASSWORD': "",
     #     'HOST': 'localhost',
     #     'PORT': '5432'
     # }
-
-
 }
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = 4294967295  #4GB limit for storage

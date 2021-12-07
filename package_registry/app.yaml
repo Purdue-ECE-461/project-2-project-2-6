@@ -15,34 +15,6 @@
 runtime: python
 entrypoint: gunicorn -b :$PORT package_registry.wsgi
 env: flex
-
-env_variables:
-# the secret key used for the Django app (from PROJECT-DIRECTORY/settings.py)
-  SECRET_KEY: 'django-insecure-g2=e&!si45va)z=_vvk!h(xs!9r=cnzktz$pt-hpc3+s$2g##o' 
-  DEBUG: 'True' # always False for deployment
-
-# name: Deploy to App Engine
-# uses: google-github-actions/deploy-appengine@v0.2.0
-# with:
-#   deliverables: app.yaml
-#   project_id: ${{ secrets.GCP_PROJECT }}
-#   credentials: ${{ secrets.GCP_SA_KEY }}
-#   promote: false
-#   version: v1
-
-# ci/cd test
-# ci/cd test2
-
-# everything after /cloudsql/ can be found by entering >> gcloud sql instances describe DATABASE-NAME << in your Terminal
-# the DATABASE-NAME is the name you gave your project's PostgreSQL database
-# the second line from the describe output called connectionName can be copied and pasted after /cloudsql/
-  DB_HOST: '/cloudsql/ece461-project2-6:us-central1:npm-db'
-  DB_PORT: '5432' # PostgreSQL port
-  DB_NAME: 'npm-db'
-  DB_USER: 'postgres' # either 'postgres' (default) or one you created on the PostgreSQL instance page
-  DB_PASSWORD: 'group6'
-  
-  # STATIC_URL: 'https://storage.googleapis.com/BUCKET-NAME/static/' # this is the url that you sync static files to
   
 handlers:
 - url: /static
@@ -59,4 +31,3 @@ runtime_config:
 # The settings below are to reduce costs during testing and are not appropriate
 # for production use. For more information, see:
 # https://cloud.google.com/appengine/docs/flexible/python/configuring-your-app-with-app-yaml
-

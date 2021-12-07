@@ -11,7 +11,7 @@ from django.core.paginator import Paginator, EmptyPage
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .cloning import rm_clone
-from .utils import encode, zip_and_encode, zipdir
+from .utils import zip_and_encode
 
 import registry.models
 from .api import PackageParser
@@ -143,7 +143,7 @@ def rate_package(request, pk):
     try:
         package = Package.objects.get(Metadata__ID__exact=str(pk))
         try:
-            data = PackageParser(package.Data.Content, package.Data.URL)
+            data = PackageParser(package.Data.Content, None)
             data.rate()
         except:
             return Response({"message": "The package rating system choked on at least one of the metrics."}, status=500)
@@ -203,15 +203,13 @@ def create_package_middleware(request):
             except django.db.utils.IntegrityError:
                 metadata.delete()
                 return Response({"message": "exactly one Data property must be set to null"}, status=400)
-
-            except TypeError:
-                metadata.delete()
-                return Response({"message": "malformed request"}, status=400)
-
             except ValueError:
                 metadata.delete()
                 return Response({"message": "package cannot be ingested"}, status=400)
-            
+            except:
+                metadata.delete()
+                return Response({"message": "malformed request"}, status=400)
+                
             finally:
                 rm_clone()
             
