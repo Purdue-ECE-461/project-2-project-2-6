@@ -33,14 +33,9 @@ jobs:
           deliverables: package_registry/app.yaml   
           project_id: ${{ secrets.GCP_PROJECT }}
           credentials: ${{ secrets.GCP_SA_KEY }}
-
-      - name: Show Output
-        run: echo ${{ steps.deploy.outputs.url }}
         
       - name: Postman Test Suite
         uses: matt-ball/newman-action@master
         with:
             collection: PRODUCTION.postman_collection.json
             environment: Tests.postman_environment.json
-      
-
