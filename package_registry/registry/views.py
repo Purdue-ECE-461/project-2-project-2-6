@@ -18,6 +18,7 @@ from .api import PackageParser
 from .serializers import *
 from django.conf import settings
 
+
 def authenticate(request):
     token = request.headers.get('X-Authorization')
 
@@ -29,6 +30,7 @@ def authenticate(request):
         raise jwt.exceptions.InvalidTokenError
 
     return True
+
 
 # Create your views here.
 @api_view(['GET'])
@@ -97,25 +99,22 @@ def package_middleware(request, pk):
     try:
         package = Package.objects.get(Metadata__ID__exact=str(pk))
         if request.method == 'GET':
-            # TO DO - CHECK THAT CONTENT FIELD IS SET
             serializer = PackageSerializer(package, many=False)
             return Response(serializer.data, status=200)
         elif request.method == 'PUT':
             payload = request.data
             if 'Metadata' in payload and 'Data' in payload:
                 if payload['Metadata'] != PackageMetadataSerializer(package.Metadata, many=False).data:
-                    return Response({"message": "name, version and ID of package must match metadata provided"}, status=400)
+                    return Response({"message": "name, version and ID of package must match metadata provided"},
+                                    status=400)
                 else:
-                    # TO DO -CHECK THAT ONLY ONE DATA FIELD IS SET
+                    if 'Content' not in payload['Data']:
+                        return Response({'message': 'Content must be provided in order to update package'}, status=400)
                     serializer_data = PackageDataSerializer(data=payload['Data'], many=False)
                     if serializer_data.is_valid(raise_exception=True):
-                        try:
-                            serializer_data.update(instance=package.Data, validated_data=serializer_data.validated_data)
-                        except django.db.utils.IntegrityError:
-                            return Response({"message": "exactly one field in Data must be null"}, status=500)
-
-                    serializer = PackageSerializer(package, many=False)
-                    return Response(serializer.data, status=200)
+                        serializer_data.update(instance=package.Data, validated_data=serializer_data.validated_data)
+                        serializer = PackageSerializer(package, many=False)
+                        return Response(serializer.data, status=200)
             else:
                 return Response(
                     {"message": "incorrect request body schema - remember to check spelling and capitalization"},
@@ -199,7 +198,7 @@ def create_package_middleware(request):
                     cont = zip_and_encode()
 
                 data = PackageData.objects.create(Content=cont, URL=None)
-                
+
             except django.db.utils.IntegrityError:
                 metadata.delete()
                 return Response({"message": "exactly one Data property must be set to null"}, status=400)
@@ -209,10 +208,10 @@ def create_package_middleware(request):
             except:
                 metadata.delete()
                 return Response({"message": "malformed request"}, status=400)
-                
+
             finally:
                 rm_clone()
-            
+
             Package.objects.create(Data=data, Metadata=metadata)
             serializer_metadata = PackageMetadataSerializer(metadata, many=False)
             return Response(serializer_metadata.data, status=200)
@@ -258,10 +257,11 @@ def reset_middleware(request):
 
     # -------------------- ENDPOINT LOGIC --------------------
     try:
-        process = Popen(args=['python', 'manage.py', 'flush'], stdout=PIPE, stdin=PIPE, stderr=PIPE, shell=False)
+        process = Popen(args=['python', 'manage.py', 'flush'], stdout=PIPE, stdin=PIPE, stderr=PIPE, shell=True)
         stdout_data = process.communicate(input='yes'.encode())[0]
         process_status = process.wait()
-        User.objects.create_superuser(username='ece461defaultadminuser', email='', password='correcthorsebatterystaple123(!__+@**(A')
+        User.objects.create_superuser(username='ece461defaultadminuser', email='',
+                                      password='correcthorsebatterystaple123(!__+@**(A')
         return Response({"message": "successful database reset"})
     except subprocess.SubprocessError:
         return Response({"message": "internal error while resetting database"})
@@ -289,6 +289,9 @@ def create_token_middleware(request):
             except django.contrib.auth.models.User.DoesNotExist:
                 return Response({'message': 'authentication failed - user not found'}, status=401)
         else:
-            return Response({'message': 'missing fields in request body --- remember to check spelling and capitalization'}, status=400)
+            return Response(
+                {'message': 'missing fields in request body --- remember to check spelling and capitalization'},
+                status=400)
     else:
-        return Response({'message': 'incorrect request body schema --- remember to check spelling and capitalization'}, status=400)
+        return Response({'message': 'incorrect request body schema --- remember to check spelling and capitalization'},
+                        status=400)
