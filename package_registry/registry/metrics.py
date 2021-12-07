@@ -2,11 +2,13 @@ from github import Github, GithubException
 import os
 import re
 import logging
+from dotenv import load_dotenv
 from .utils import find
 
 
 log = logging.getLogger(__name__)
 
+load_dotenv()
 token = os.environ.get("TOKEN")
 g = Github(token)
 

@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup
 from github import Github
 from os import environ
 
+from dotenv import load_dotenv
 from .metrics import *
 from .cloning import get_clone
 from soupsieve.util import lower
@@ -13,7 +14,7 @@ import logging
 
 
 log = logging.getLogger(__name__)
-
+load_dotenv()
 token =  environ.get("TOKEN")
 
 class PackageParser():
