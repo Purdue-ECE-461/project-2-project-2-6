@@ -18,6 +18,13 @@ from .api import PackageParser
 from .serializers import *
 from django.conf import settings
 
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+SUPERUSERNAME = os.environ.get("SUPERUSERNAME")
+SUPERPW = os.environ.get("SUPERPW")
+
 
 def authenticate(request):
     token = request.headers.get('X-Authorization')
@@ -260,8 +267,8 @@ def reset_middleware(request):
         process = Popen(args=['python', 'manage.py', 'flush'], stdout=PIPE, stdin=PIPE, stderr=PIPE, shell=False)
         stdout_data = process.communicate(input='yes'.encode())[0]
         process_status = process.wait()
-        User.objects.create_superuser(username='ece461defaultadminuser', email='',
-                                      password='correcthorsebatterystaple123(!__+@**(A')
+        User.objects.create_superuser(username=SUPERUSERNAME, email='',
+                                      password=SUPERPW)
         return Response({"message": "successful database reset"})
     except subprocess.SubprocessError:
         return Response({"message": "internal error while resetting database"})
