@@ -1,0 +1,1193 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+        "title": "ECE 461 - Fall 2021 - Project 2",
+        "version": "2.0.0",
+        "description": "API for ECE 461/Fall 2021/Project 2: A Trustworthy Module Registry",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "Benjamin Castro",
+            "email": "castro46@purdue.edu"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
+        }
+    },
+    "servers": [
+        {
+            "url": "http://ece461-project2-6.uc.r.appspot.com/",
+            "description": "This URL for our cloud computing instance on Google App Engine platform."
+        }
+    ],
+    "paths": {
+        "/reset": {
+            "summary": "Reset registry",
+            "description": "This endpoint deletes all the packages and user data from the system. The only data left in the system is the default user's credentials.",
+            "delete": {
+                "responses": {
+                    "200": {
+                        "description": "Registry is reset."
+                    },
+                    "401": {
+                        "description": "You do not have permission to reset the registry."
+                    }
+                },
+                "security": [
+                    {
+                        "UserAndPasswordYieldsToken": [
+                        ]
+                    }
+                ],
+                "operationId": "RegistryReset",
+                "summary": "Reset System",
+                "description": "All system data is wiped except for default user."
+            },
+            "parameters": [
+                {
+                    "name": "X-Authorization",
+                    "description": "Authentication token obtained from '/authenticate' endpoint.",
+                    "schema": {
+                        "$ref": "#/components/schemas/AuthenticationToken"
+                    },
+                    "in": "header",
+                    "required": true
+                }
+            ]
+        },
+        "/package/{id}": {
+            "summary": "Interact with the package with this ID",
+            "description": "Path parameter ID is required",
+            "get": {
+                "parameters": [
+                    {
+                        "name": "id",
+                        "description": "ID of package to fetch",
+                        "schema": {
+                            "$ref": "#/components/schemas/PackageID"
+                        },
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        },
+                        "description": "unexpected error"
+                    },
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Package"
+                                },
+                                "examples": {
+                                    "Package": {
+                                        "value": {
+                                            "Metadata": {
+                                                "ID": "ID1",
+                                                "Name": "PACKAGE1",
+                                                "Version": "1.0.0"
+                                            },
+                                            "Data": {
+                                                "Content": ";alsfl;ahoiewfnsf"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Successful package retrieval."
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "string"
+                                },
+                                "examples": {
+                                    "Unauthenticated": {
+                                        "value": {
+                                            "message": "unauthenticated - no authentication token provided"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Response when authentication token is invalid. Reponse includes appropriate message."
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "string"
+                                },
+                                "examples": {
+                                    "package not found": {
+                                        "value": {
+                                            "message": "package not found"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Malformed request body. Response included appropriate message."
+                    }
+                },
+                "security": [
+                    {
+                        "UserAndPasswordYieldsToken": [
+                        ]
+                    }
+                ],
+                "operationId": "PackageRetrieve",
+                "summary": "Return this package",
+                "description": "Get detailed package info."
+            },
+            "put": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Package"
+                            },
+                            "examples": {
+                                "update": {
+                                    "value": {
+                                        "Metadata": {
+                                            "ID": "ID1",
+                                            "Name": "PACKAGE1",
+                                            "Version": "1.0.0"
+                                        },
+                                        "Data": {
+                                            "Content": "NEWCONTENT"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/components/schemas/PackageID"
+                        },
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Package"
+                                },
+                                "examples": {
+                                    "package": {
+                                        "value": {
+                                            "Metadata": {
+                                                "ID": "ID1",
+                                                "Name": "PACKAGE1",
+                                                "Version": "1.0.0"
+                                            },
+                                            "Data": {
+                                                "Content": "NEWCONTENT"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Success."
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "string"
+                                },
+                                "examples": {
+                                    "reposnse": {
+                                        "value": {
+                                            "message": "name, version and ID of package must match metadata provided"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Malformed request (e.g. no such package)."
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "string"
+                                },
+                                "examples": {
+                                    "unauthenticated": {
+                                        "value": {
+                                            "message": "unauthenticated - no authentication token provided"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Invalid authentication token. Response includes appropriate message."
+                    }
+                },
+                "security": [
+                    {
+                        "UserAndPasswordYieldsToken": [
+                        ]
+                    }
+                ],
+                "operationId": "PackageUpdate",
+                "summary": "Update this version of the package.",
+                "description": "The name, version, and ID must match.\n\nThe package contents (from PackageData) will replace the previous contents.\n\nA package's content cannot be updated by providing only a URL. In order to update a package, the Content property must be set."
+            },
+            "delete": {
+                "parameters": [
+                    {
+                        "name": "id",
+                        "description": "Package ID",
+                        "schema": {
+                            "$ref": "#/components/schemas/PackageID"
+                        },
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "string"
+                                },
+                                "examples": {
+                                    "Success": {
+                                        "value": {
+                                            "message": "package successfully deleted"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Package is deleted."
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "string"
+                                },
+                                "examples": {
+                                    "bad request": {
+                                        "value": {
+                                            "message": "package not found"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "description": "No such package."
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "string"
+                                },
+                                "examples": {
+                                    "unauthorized": {
+                                        "value": {
+                                            "message": "unauthenticated - no authentication token provided"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Invalid authentication token. Response includes appropriate message."
+                    }
+                },
+                "security": [
+                    {
+                        "UserAndPasswordYieldsToken": [
+                        ]
+                    }
+                ],
+                "operationId": "PackageDelete",
+                "summary": "Delete this version of the package."
+            },
+            "parameters": [
+                {
+                    "examples": {
+                        "id": {
+                            "value": "ID1"
+                        }
+                    },
+                    "name": "id",
+                    "description": "Package ID",
+                    "schema": {
+                        "$ref": "#/components/schemas/PackageID"
+                    },
+                    "in": "path",
+                    "required": true
+                },
+                {
+                    "name": "X-Authorization",
+                    "description": "Authentication token obtained from '/authenticate' endpoint.",
+                    "schema": {
+                        "$ref": "#/components/schemas/AuthenticationToken"
+                    },
+                    "in": "header",
+                    "required": true
+                }
+            ]
+        },
+        "/package": {
+            "summary": "Create a version of a package",
+            "description": "The \"ID\" field in the request body allows the user to use their own ID scheme. If this ID is already in use, the system will inform this to the user, and the user must choose a new ID.\n\nWhen creating a package a unique combination of Name+Version must be provided, otherwise an error will be returned.\n\nWhen creating a package, both the Content and the URL properties can be set. However, by default if the Content property is set, the system will use this property to save the package and set the URL property to null.\n\nWhen creating a package, if only the URL property is set, the system will attempt to ingest the package specified in the URL. If the package cannot be ingested, an appropriate message will be returned.",
+            "post": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Package"
+                            },
+                            "examples": {
+                                "package": {
+                                    "value": {
+                                        "Metadata": {
+                                            "ID": "ID1",
+                                            "Name": "PACKAGE1",
+                                            "Version": "1.0.0"
+                                        },
+                                        "Data": {
+                                            "Content": ";alsfl;ahoiewfnsf"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "403": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "string"
+                                },
+                                "examples": {
+                                    "response": {
+                                        "value": {
+                                            "message": "duplicate key-value (Name, Version) violates uniqueness constraint"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Name+Version combination already exists."
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "string"
+                                },
+                                "examples": {
+                                    "response": {
+                                        "value": {
+                                            "message": "package cannot be ingested"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Malformed request. An appropriate message will be included in the response."
+                    },
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PackageMetadata"
+                                },
+                                "examples": {
+                                    "response": {
+                                        "value": {
+                                            "ID": "ID4",
+                                            "Name": "PACKAGE4",
+                                            "Version": "1.0.0"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Success. Check the ID in the returned metadata for the official ID."
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "string"
+                                },
+                                "examples": {
+                                    "resopnse": {
+                                        "value": {
+                                            "message": "unauthenticated - invalid authentication token"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Invalid authentication token provided."
+                    }
+                },
+                "security": [
+                    {
+                        "UserAndPasswordYieldsToken": [
+                        ]
+                    }
+                ],
+                "operationId": "PackageCreate",
+                "summary": "Create package",
+                "description": "Create Package"
+            },
+            "parameters": [
+                {
+                    "name": "X-Authorization",
+                    "description": "Authentication token obtained from '/authenticate' endpoint.",
+                    "schema": {
+                        "$ref": "#/components/schemas/AuthenticationToken"
+                    },
+                    "in": "header",
+                    "required": true
+                }
+            ]
+        },
+        "/package/{id}/rate": {
+            "summary": "Get the rating for this package.",
+            "get": {
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PackageRating"
+                                },
+                                "examples": {
+                                    "response": {
+                                        "value": {
+                                            "RampUp": "0.50",
+                                            "Correctness": "1.00",
+                                            "BusFactor": "1.00",
+                                            "ResponsiveMaintainer": "0.83",
+                                            "LicenseScore": "1.00",
+                                            "GoodPinningPractice": "0.50"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Rating. Only use this if each metric was computed successfully."
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "string"
+                                },
+                                "examples": {
+                                    "response": {
+                                        "value": {
+                                            "message": "No such package."
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "description": "No such package."
+                    },
+                    "500": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "string"
+                                },
+                                "examples": {
+                                    "response": {
+                                        "value": {
+                                            "message": "The package rating system choked on at least one of the metrics."
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "description": "The package rating system choked on at least one of the metrics."
+                    }
+                },
+                "security": [
+                    {
+                        "UserAndPasswordYieldsToken": [
+                        ]
+                    }
+                ],
+                "operationId": "PackageRate",
+                "summary": "Rate package",
+                "description": "Rate package and return all metrics"
+            },
+            "parameters": [
+                {
+                    "name": "id",
+                    "schema": {
+                        "$ref": "#/components/schemas/PackageID"
+                    },
+                    "in": "path",
+                    "required": true
+                },
+                {
+                    "name": "X-Authorization",
+                    "description": "Authentication token obtained from '/authenticate' endpoint.",
+                    "schema": {
+                        "$ref": "#/components/schemas/AuthenticationToken"
+                    },
+                    "in": "header",
+                    "required": true
+                }
+            ]
+        },
+        "/authenticate": {
+            "summary": "Authenticate this user -- get an access token.",
+            "description": "1. The obtained token should be provided to the other endpoints via the \"X-Authorization\" header.",
+            "put": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AuthenticationRequest"
+                            },
+                            "examples": {
+                                "authenticate": {
+                                    "value": {
+                                        "User": {
+                                            "username": "ece461defaultadminuser"
+                                        },
+                                        "Secret": {
+                                            "password": "correcthorsebatterystaple123(!__+@**(A"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AuthenticationToken"
+                                },
+                                "examples": {
+                                    "Token": {
+                                        "value": {
+                                            "Token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImVjZTQ2MWRlZmF1bHRhZG1pbnVzZXIiLCJleHAiOjE2Mzg2ODA3MTQsImlhdCI6MTYzODY0NDcxNH0.2MA8uSSZTLo06J9Uq_w6nLb6fKQ7rlPpPKwdt9bSoFM"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Valid username and password provided. Returns authentication token."
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "string"
+                                },
+                                "examples": {
+                                    "Incorrect passord": {
+                                        "value": {
+                                            "message": "authentication failed - incorrect password"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Authentication failed (e.g. no such user or invalid password)"
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "string"
+                                },
+                                "examples": {
+                                    "invalid request body": {
+                                        "value": {
+                                            "message": "incorrect request body schema --- remember to check spelling and capitalization"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Invalid request body"
+                    }
+                },
+                "operationId": "CreateAuthToken",
+                "summary": "Authentication",
+                "description": "This endpoint accepts a request body containing a username and a password and returns an authorization token in the response body. If either the username or the password is invalid, the API will return a 401 response with an appropriate message."
+            }
+        },
+        "/package/byName/{name}": {
+            "summary": "Interact with the package with this name",
+            "delete": {
+                "parameters": [
+                    {
+                        "name": "name",
+                        "schema": {
+                            "$ref": "#/components/schemas/PackageName"
+                        },
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "string"
+                                },
+                                "examples": {
+                                    "response": {
+                                        "value": {
+                                            "message": "all versions of <package> were deleted"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "description": "All packages with provided name were deleteed."
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "string"
+                                },
+                                "examples": {
+                                    "reponse": {
+                                        "value": {
+                                            "message": "package not found"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "description": "No such package."
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "string"
+                                },
+                                "examples": {
+                                    "reponse": {
+                                        "value": "{'message': 'unauthenticated - invalid authentication token'}"
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Invalid authentication token X-Authorization provided."
+                    }
+                },
+                "operationId": "PackageByNameDelete",
+                "summary": "Delete all versions of this package."
+            },
+            "parameters": [
+                {
+                    "name": "name",
+                    "schema": {
+                        "$ref": "#/components/schemas/PackageName"
+                    },
+                    "in": "path",
+                    "required": true
+                },
+                {
+                    "name": "X-Authorization",
+                    "description": "Authentication token obtained from '/authenticate' endpoint.",
+                    "schema": {
+                        "$ref": "#/components/schemas/AuthenticationToken"
+                    },
+                    "in": "header",
+                    "required": true
+                }
+            ]
+        },
+        "/packages/": {
+            "summary": "Query the registry.",
+            "description": "Search for packages satisfying the indicated query.\n\nThis endpoint only matches EXACT version+name combination. Mispellings and miscapitalization will result in not be included in database query.\n\nIf you want to enumerate all packages, provide an array with a single PackageQuery whose name is \"*\". In this case, the \"Version\" attribute will be ignored.\n\nThe response is paginated. The response header includes the offset to use in the next query.",
+            "post": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/PackageQuery"
+                                }
+                            },
+                            "examples": {
+                                "Query": {
+                                    "value": [
+                                        {
+                                            "Name": "PACK1",
+                                            "Version": "1.0.0"
+                                        },
+                                        {
+                                            "Name": "PACK2",
+                                            "Version": "1.0.0"
+                                        },
+                                        {
+                                            "Name": "PACK11",
+                                            "Version": "2.0.0"
+                                        }
+                                    ]
+                                },
+                                "Query2": {
+                                    "value": [
+                                        {
+                                            "Name": "*"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "default": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        },
+                        "description": "unexpected error"
+                    },
+                    "200": {
+                        "headers": {
+                            "Offset": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EnumerateOffset"
+                                },
+                                "examples": {
+                                    "Offset": {
+                                        "value": "Offset=1"
+                                    }
+                                }
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/PackageMetadata"
+                                    }
+                                },
+                                "examples": {
+                                    "Response": {
+                                        "value": [
+                                            {
+                                                "ID": "ID1",
+                                                "Name": "PACKAGE1",
+                                                "Version": "1.0.0"
+                                            },
+                                            {
+                                                "ID": "ID2",
+                                                "Name": "PACKAGE2",
+                                                "Version": "1.0.0"
+                                            },
+                                            {
+                                                "ID": "ID3",
+                                                "Name": "PACKAGE3",
+                                                "Version": "1.0.0"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        },
+                        "description": "List of packages"
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "string"
+                                },
+                                "examples": {
+                                    "Unauthenticated": {
+                                        "value": {
+                                            "message": "unauthenticated - no authentication token provided"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Response when user provided invalid authentication token. Response contains appropriate message."
+                    },
+                    "400": {
+                        "description": "Malformed request body."
+                    }
+                },
+                "security": [
+                    {
+                        "UserAndPasswordYieldsToken": [
+                        ]
+                    }
+                ],
+                "operationId": "PackagesList",
+                "summary": "Get packages",
+                "description": "Get any packages fitting the query."
+            },
+            "parameters": [
+                {
+                    "name": "X-Authorization",
+                    "description": "Authentication token obtained from '/authenticate' endpoint.",
+                    "schema": {
+                        "$ref": "#/components/schemas/AuthenticationToken"
+                    },
+                    "in": "header",
+                    "required": true
+                },
+                {
+                    "name": "Offset",
+                    "description": "Offset for pagination",
+                    "schema": {
+                        "$ref": "#/components/schemas/EnumerateOffset"
+                    },
+                    "in": "query",
+                    "required": false
+                }
+            ]
+        }
+    },
+    "components": {
+        "schemas": {
+            "Error": {
+                "required": [
+                    "code",
+                    "message"
+                ],
+                "properties": {
+                    "code": {
+                        "format": "int32",
+                        "type": "integer"
+                    },
+                    "message": {
+                        "type": "string"
+                    }
+                }
+            },
+            "Package": {
+                "required": [
+                    "Metadata",
+                    "Data"
+                ],
+                "type": "object",
+                "properties": {
+                    "Data": {
+                        "$ref": "#/components/schemas/PackageData",
+                        "description": ""
+                    },
+                    "Metadata": {
+                        "$ref": "#/components/schemas/PackageMetadata",
+                        "description": ""
+                    }
+                },
+                "example": {
+                    "Metadata": {
+                        "ID": "ID1",
+                        "Name": "PACKAGE1",
+                        "Version": "1.0.0"
+                    },
+                    "Data": {
+                        "Content": ";alsfl;ahoiewfnsf"
+                    }
+                }
+            },
+            "PackageMetadata": {
+                "description": "The \"Name\" and \"Version\" are used as a unique identifier pair when uploading a package.\n\nThe \"ID\" is used as an internal identifier for interacting with existing packages.",
+                "required": [
+                    "Name",
+                    "Version",
+                    "ID"
+                ],
+                "type": "object",
+                "properties": {
+                    "Name": {
+                        "$ref": "#/components/schemas/PackageName",
+                        "description": "Package name",
+                        "example": "my-package"
+                    },
+                    "Version": {
+                        "description": "Package version",
+                        "type": "string",
+                        "example": "1.2.3"
+                    },
+                    "ID": {
+                        "$ref": "#/components/schemas/PackageID",
+                        "description": "Unique ID for use with the /package/{id} endpoint.",
+                        "example": "123567192081501"
+                    }
+                },
+                "example": "\"Metadata\": {\r\n        \"ID\": \"ID1\",\r\n        \"Name\": \"PACKAGE1\",\r\n        \"Version\": \"1.0.0\"\r\n}"
+            },
+            "PackageData": {
+                "description": "When creating a package, both Content and URL can be set. However, if Content is set, the systems will use this to store the package and set the URL property to null.",
+                "required": [
+                ],
+                "type": "object",
+                "properties": {
+                    "Content": {
+                        "description": "Package contents. This is the zip file uploaded by the user. (Encoded as text using a Base64 encoding).\n\nThis will be a zipped version of an npm package's GitHub repository, minus the \".git/\" directory.\" It will, for example, include the \"package.json\" file that can be used to retrieve the project homepage.\n\nSee https://docs.npmjs.com/cli/v7/configuring-npm/package-json#homepage.",
+                        "type": "string"
+                    },
+                    "URL": {
+                        "description": "Package URL (for use in public ingest).",
+                        "type": "string"
+                    }
+                },
+                "example": "\"Data\": {\r\n        \"Content\": \";alsfl;ahoiewfnsf\",\r\n        \"URL\": null\r\n}"
+            },
+            "User": {
+                "description": "",
+                "required": [
+                    "username"
+                ],
+                "type": "object",
+                "properties": {
+                    "username": {
+                        "description": "username",
+                        "type": "string",
+                        "example": "ece461defaultadminuser"
+                    }
+                },
+                "example": "\"User\": {\r\n        \"username\": \"ece461defaultadminuser\"\r\n    }"
+            },
+            "UserAuthenticationInfo": {
+                "description": "Authentication info for a user",
+                "required": [
+                    "password"
+                ],
+                "type": "object",
+                "properties": {
+                    "password": {
+                        "description": "Password for a user. Per the spec, this should be a \"strong\" password.",
+                        "type": "string",
+                        "example": "correcthorsebatterystaple123(!__+@**(A"
+                    }
+                },
+                "example": "\"Secret\": {\r\n        \"password\": \"correcthorsebatterystaple123(!__+@**(A\"\r\n    }"
+            },
+            "PackageID": {
+                "description": "",
+                "type": "string"
+            },
+            "PackageRating": {
+                "description": "Package rating (cf. Project 1).\n\nIf the Project 1 that you inherited does not support one or more of the original properties, denote this with the value \"-1\".",
+                "required": [
+                    "RampUp",
+                    "Correctness",
+                    "BusFactor",
+                    "ResponsiveMaintainer",
+                    "LicenseScore",
+                    "GoodPinningPractice"
+                ],
+                "type": "object",
+                "properties": {
+                    "BusFactor": {
+                        "format": "double",
+                        "description": "",
+                        "type": "number"
+                    },
+                    "Correctness": {
+                        "format": "double",
+                        "description": "",
+                        "type": "number"
+                    },
+                    "RampUp": {
+                        "format": "double",
+                        "description": "",
+                        "type": "number"
+                    },
+                    "ResponsiveMaintainer": {
+                        "format": "double",
+                        "description": "",
+                        "type": "number"
+                    },
+                    "LicenseScore": {
+                        "format": "double",
+                        "description": "",
+                        "type": "number"
+                    },
+                    "GoodPinningPractice": {
+                        "format": "double",
+                        "description": "The fraction of its dependencies that are pinned to at least a specific major+minor version, e.g. version 2.3.X of a package. (If there are zero dependencies, they should receive a 1.0 rating. If there are two dependencies, one pinned to this degree, then they should receive a Â½ = 0.5 rating).",
+                        "type": "number"
+                    }
+                },
+                "example": {
+                    "RampUp": "0.50",
+                    "Correctness": "1.00",
+                    "BusFactor": "1.00",
+                    "ResponsiveMaintainer": "0.83",
+                    "LicenseScore": "1.00",
+                    "GoodPinningPractice": "0.50"
+                }
+            },
+            "PackageHistoryEntry": {
+                "description": "One entry of the history of this package.",
+                "required": [
+                    "User",
+                    "Date",
+                    "PackageMetadata",
+                    "Action"
+                ],
+                "type": "object",
+                "properties": {
+                    "User": {
+                        "$ref": "#/components/schemas/User",
+                        "description": ""
+                    },
+                    "Date": {
+                        "format": "date-time",
+                        "description": "Date of activity.",
+                        "type": "string"
+                    },
+                    "PackageMetadata": {
+                        "$ref": "#/components/schemas/PackageMetadata",
+                        "description": ""
+                    },
+                    "Action": {
+                        "description": "",
+                        "enum": [
+                            "CREATE",
+                            "UPDATE",
+                            "DOWNLOAD",
+                            "RATE"
+                        ],
+                        "type": "string"
+                    }
+                }
+            },
+            "PackageName": {
+                "description": "Name of a package.\n\n- Names should only use typical \"keyboard\" characters.\n- The name \"*\" is reserved. See the `/packages` API for its meaning.",
+                "type": "string"
+            },
+            "AuthenticationToken": {
+                "description": "The spec permits you to use any token format you like. You could, for example, look into JSON Web Tokens (\"JWT\", pronounced \"jots\"): https://jwt.io.",
+                "type": "string",
+                "example": "\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImVjZTQ2MWRlZmF1bHRhZG1pbnVzZXIiLCJleHAiOjE2Mzg2ODA3MTQsImlhdCI6MTYzODY0NDcxNH0.2MA8uSSZTLo06J9Uq_w6nLb6fKQ7rlPpPKwdt9bSoFM\""
+            },
+            "AuthenticationRequest": {
+                "description": "",
+                "required": [
+                    "User",
+                    "Secret"
+                ],
+                "type": "object",
+                "properties": {
+                    "User": {
+                        "$ref": "#/components/schemas/User",
+                        "description": "",
+                        "example": "\"User\": {\r\n        \"username\": \"ece461defaultadminuser\"\r\n    }"
+                    },
+                    "Secret": {
+                        "$ref": "#/components/schemas/UserAuthenticationInfo",
+                        "description": "",
+                        "example": "\"Secret\": {\r\n        \"password\": \"correcthorsebatterystaple123(!__+@**(A\"\r\n}"
+                    }
+                },
+                "example": {
+                    "User": {
+                        "username": "ece461defaultadminuser"
+                    },
+                    "Secret": {
+                        "password": "correcthorsebatterystaple123(!__+@**(A"
+                    }
+                }
+            },
+            "SemverRange": {
+                "description": "",
+                "type": "string",
+                "example": "Exact (1.2.3)\nBounded range (1.2.3-2.1.0)\nCarat (^1.2.3)\nTilde (~1.2.0)"
+            },
+            "PackageQuery": {
+                "description": "Array of package queries.",
+                "required": [
+                    "Version",
+                    "Name"
+                ],
+                "type": "object",
+                "properties": {
+                    "Version": {
+                        "description": "Package Version",
+                        "type": "string"
+                    },
+                    "Name": {
+                        "$ref": "#/components/schemas/PackageName",
+                        "description": "Package Name"
+                    }
+                },
+                "example": [
+                    {
+                        "Name": "PACK1",
+                        "Version": "1.0.0"
+                    },
+                    {
+                        "Name": "PACK2",
+                        "Version": "1.0.0"
+                    },
+                    {
+                        "Name": "PACK11",
+                        "Version": "2.0.0"
+                    }
+                ]
+            },
+            "EnumerateOffset": {
+                "description": "Offset in pagination.",
+                "type": "string",
+                "example": "1"
+            }
+        },
+        "securitySchemes": {
+            "UserAndPasswordYieldsToken": {
+                "type": "apiKey",
+                "description": "Use the /authentication endpoint to obtain an authorization token.",
+                "name": "X-Authorization",
+                "in": "header"
+            }
+        }
+    }
+}
