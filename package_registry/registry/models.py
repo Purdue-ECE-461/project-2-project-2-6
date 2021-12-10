@@ -14,14 +14,14 @@ class PackageMetadata(models.Model):
             models.UniqueConstraint(fields=['Name', 'Version'], name='unique_package')
         ]
 
-    ID = models.CharField(primary_key=True, max_length=50)
     Name = models.CharField(max_length=50)
     Version = models.CharField(max_length=50)
+    ID = models.CharField(primary_key=True, max_length=50)
 
 
 class Package(models.Model):
-    Data = models.ForeignKey(PackageData, on_delete=models.CASCADE)
-    Metadata = models.ForeignKey(PackageMetadata, on_delete=models.CASCADE)
+    data = models.ForeignKey(PackageData, on_delete=models.CASCADE)
+    metadata = models.ForeignKey(PackageMetadata, on_delete=models.CASCADE)
 
 
 class PackageRating(models.Model):

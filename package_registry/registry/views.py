@@ -92,36 +92,37 @@ def package_middleware(request, pk):
     try:
         if not authenticate(request):
             return Response({'message': 'unauthenticated - no authentication token provided'}, status=401)
+        print(request)
     except jwt.exceptions.InvalidTokenError:
         return Response({'message': 'unauthenticated - invalid authentication token'}, status=401)
 
     # -------------------- ENDPOINT LOGIC --------------------
     try:
-        package = Package.objects.get(Metadata__ID__exact=str(pk))
+        package = Package.objects.get(metadata__ID__exact=str(pk))
         if request.method == 'GET':
             serializer = PackageSerializer(package, many=False)
             return Response(serializer.data, status=200)
         elif request.method == 'PUT':
             payload = request.data
-            if 'Metadata' in payload and 'Data' in payload:
-                if payload['Metadata'] != PackageMetadataSerializer(package.Metadata, many=False).data:
+            if 'metadata' in payload and 'data' in payload:
+                if payload['metadata'] != PackageMetadataSerializer(package.metadata, many=False).data:
                     return Response({"message": "name, version and ID of package must match metadata provided"},
                                     status=400)
                 else:
-                    if 'Content' not in payload['Data']:
+                    if 'Content' not in payload['data']:
                         return Response({'message': 'Content must be provided in order to update package'}, status=400)
-                    serializer_data = PackageDataSerializer(data=payload['Data'], many=False)
+                    serializer_data = PackageDataSerializer(data=payload['data'], many=False)
                     if serializer_data.is_valid(raise_exception=True):
-                        serializer_data.update(instance=package.Data, validated_data=serializer_data.validated_data)
+                        serializer_data.update(instance=package.data, validated_data=serializer_data.validated_data)
                         serializer = PackageSerializer(package, many=False)
-                        return Response(serializer.data, status=200)
+                        return Response(status=200)
             else:
                 return Response(
                     {"message": "incorrect request body schema - remember to check spelling and capitalization"},
                     status=400)
         else:
-            package.Metadata.delete()
-            package.Data.delete()
+            package.metadata.delete()
+            package.data.delete()
             package.delete()
             return Response({"message": "package deleted"}, status=200)
 
@@ -140,9 +141,9 @@ def rate_package(request, pk):
 
     # -------------------- ENDPOINT LOGIC --------------------
     try:
-        package = Package.objects.get(Metadata__ID__exact=str(pk))
+        package = Package.objects.get(metadata__ID__exact=str(pk))
         try:
-            data = PackageParser(package.Data.Content, None)
+            data = PackageParser(package.data.Content, None)
             data.rate()
         except:
             return Response({"message": "The package rating system choked on at least one of the metrics."}, status=500)
@@ -174,10 +175,10 @@ def create_package_middleware(request):
 
     # -------------------- ENDPOINT LOGIC --------------------
     payload = request.data
-    if 'Metadata' in payload and 'Data' in payload:
+    if 'metadata' in payload and 'data' in payload:
 
-        serializer_metadata = PackageMetadataSerializer(data=payload['Metadata'], many=False)
-        serializer_data = PackageDataSerializer(data=payload['Data'], many=False)
+        serializer_metadata = PackageMetadataSerializer(data=payload['metadata'], many=False)
+        serializer_data = PackageDataSerializer(data=payload['data'], many=False)
         if serializer_data.is_valid(raise_exception=True) and serializer_metadata.is_valid(raise_exception=True):
             try:
                 metadata = PackageMetadata.objects.create(ID=serializer_metadata.data.get('ID'),
@@ -212,9 +213,9 @@ def create_package_middleware(request):
             finally:
                 rm_clone()
 
-            Package.objects.create(Data=data, Metadata=metadata)
+            Package.objects.create(data=data, metadata=metadata)
             serializer_metadata = PackageMetadataSerializer(metadata, many=False)
-            return Response(serializer_metadata.data, status=200)
+            return Response(serializer_metadata.data, status=201)
 
     else:
         return Response({"message": "incorrect request body schema - remember to check spelling and capitalization"},
@@ -234,14 +235,14 @@ def byName_middleware(request, name):
     if name == '*':
         return Response({"message": "query name reserved"}, status=400)
 
-    querySet = Package.objects.filter(Metadata__Name__iexact=name)
+    querySet = Package.objects.filter(metadata__Name__iexact=name)
 
     if len(querySet) == 0:
-        return Response({"message": "package not found"})
+        return Response({"message": "package name not found"})
     else:
         for package in querySet:
-            package.Metadata.delete()
-            package.Data.delete()
+            package.metadata.delete()
+            package.data.delete()
             package.delete()
         return Response({"message": "all versions of {n} were deleted".format(n=name)}, status=200)
 
@@ -273,24 +274,24 @@ def create_token_middleware(request):
     if 'User' in payload and 'Secret' in payload:
         user = payload['User']
         secret = payload['Secret']
-        if 'username' in user and 'password' in secret:
+        if 'name' in user and 'password' in secret:
             try:
-                user_instance = User.objects.get(username__exact=user['username'])
+                user_instance = User.objects.get(username__exact=user['name'])
                 if not user_instance.check_password(secret['password']):
                     return Response({'message': 'authentication failed - incorrect password'}, status=401)
 
                 payload = {
-                    'username': user['username'],
+                    'name': user['name'],
                     'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=10),
                     'iat': datetime.datetime.utcnow()
                 }
                 token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256')
-                return Response({'Token': token}, status=200)
+                return Response(token, status=200, content_type='application/json')
             except django.contrib.auth.models.User.DoesNotExist:
                 return Response({'message': 'authentication failed - user not found'}, status=401)
         else:
             return Response(
-                {'message': 'missing fields in request body --- remember to check spelling and capitalization'},
+                {'message': 'incorrect fields in request body --- remember to check spelling and capitalization'},
                 status=400)
     else:
         return Response({'message': 'incorrect request body schema --- remember to check spelling and capitalization'},

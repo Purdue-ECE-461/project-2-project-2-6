@@ -7,7 +7,7 @@ from .models import *
 class PackageMetadataSerializer(serializers.ModelSerializer):
     class Meta:
         model = PackageMetadata
-        fields = '__all__'
+        fields = ['Name', 'Version', 'ID']
 
     def update(self, instance, validated_data):
         instance.Name = validated_data.get('Name', instance.Name)
@@ -35,12 +35,12 @@ class PackageDataSerializer(serializers.ModelSerializer):
 
 
 class PackageSerializer(serializers.ModelSerializer):
-    Data = PackageDataSerializer(read_only=True)
-    Metadata = PackageMetadataSerializer(read_only=True)
+    data = PackageDataSerializer(read_only=True)
+    metadata = PackageMetadataSerializer(read_only=True)
 
     class Meta:
         model = Package
-        fields = ('Metadata', 'Data')
+        fields = ('metadata', 'data')
 
 
 class PackageRatingSerializer(serializers.ModelSerializer):
