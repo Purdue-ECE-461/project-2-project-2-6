@@ -9,9 +9,8 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
-#SECRET_KEY = os.environ.get("SECRET_KEY")
-SECRET_KEY = 'lasfbsibf;sfs'
-#PROD_DATABASE_PASSWORD = os.environ.get('PROD_DATABASE_PASSWORD')
+SECRET_KEY = os.environ.get("SECRET_KEY")
+PROD_DATABASE_PASSWORD = os.environ.get('PROD_DATABASE_PASSWORD')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -76,14 +75,14 @@ WSGI_APPLICATION = 'package_registry.wsgi.application'
 
 DATABASES = {
     # PRODUCTION
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.postgresql',
-    #     'NAME': 'npm-db',
-    #     'USER': 'postgres',
-    #     'PASSWORD': PROD_DATABASE_PASSWORD,
-    #     'HOST': '/cloudsql/ece461-project2-6:us-central1:npm-db',
-    #     'PORT': '5432'
-    # }
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'npm-db',
+        'USER': 'postgres',
+        'PASSWORD': PROD_DATABASE_PASSWORD,
+        'HOST': '/cloudsql/ece461-project2-6:us-central1:npm-db',
+        'PORT': '5432'
+    }
 
     # PROXY CLOUDSQL
     # 'default': {
@@ -96,14 +95,14 @@ DATABASES = {
     # }
 
     # DEVELOPMENT
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': "devDB",
-        'USER': "postgres",
-        'PASSWORD': "1234",
-        'HOST': 'localhost',
-        'PORT': '5432'
-    }
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.postgresql',
+    #     'NAME': "devDB",
+    #     'USER': "postgres",
+    #     'PASSWORD': "1234",
+    #     'HOST': 'localhost',
+    #     'PORT': '5432'
+    # }
 }
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = 4294967295  #4GB limit for storage

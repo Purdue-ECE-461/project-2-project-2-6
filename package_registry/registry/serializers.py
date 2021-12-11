@@ -46,8 +46,7 @@ class PackageSerializer(serializers.ModelSerializer):
 class PackageRatingSerializer(serializers.ModelSerializer):
     class Meta:
         model = PackageRating
-        fields = ("RampUp", "Correctness", "BusFactor", "ResponsiveMaintainer", "LicenseScore", "GoodPinningPractice")
-
+        fields = ['BusFactor', 'Correctness', 'RampUp', 'ResponsiveMaintainer', 'LicenseScore', 'GoodPinningPractice']
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = django.contrib.auth.models.User

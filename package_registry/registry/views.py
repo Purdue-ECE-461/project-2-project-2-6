@@ -206,23 +206,21 @@ def create_package_middleware(request):
                     cont = zip_and_encode()
 
                 data = PackageData.objects.create(Content=cont, URL=None)
+                Package.objects.create(data=data, metadata=metadata)
+                serializer_metadata = PackageMetadataSerializer(metadata, many=False)
+                return Response(serializer_metadata.data, status=201)
 
             except django.db.utils.IntegrityError:
                 metadata.delete()
                 return Response({"message": "exactly one Data property must be set to null"}, status=400)
             except ValueError:
                 metadata.delete()
-                return Response({"message": "package cannot be ingested"}, status=400)
+                return Response({"message": "package cannot be ingested because it did not pass the metric requirements"}, status=400)
             except:
                 metadata.delete()
-                return Response({"message": "malformed request"}, status=400)
-
+                return Response({"message": "could not ingest package due to an internal error"}, status=400)
             finally:
                 rm_clone()
-
-            Package.objects.create(data=data, metadata=metadata)
-            serializer_metadata = PackageMetadataSerializer(metadata, many=False)
-            return Response(serializer_metadata.data, status=201)
 
     else:
         return Response({"message": "incorrect request body schema - remember to check spelling and capitalization"},
@@ -268,8 +266,7 @@ def reset_middleware(request):
         process = Popen(args=['python', 'manage.py', 'flush'], stdout=PIPE, stdin=PIPE, stderr=PIPE, shell=False)
         stdout_data = process.communicate(input='yes'.encode())[0]
         process_status = process.wait()
-        User.objects.create_superuser(username=SUPERUSERNAME, email='',
-                                      password=SUPERPW)
+        User.objects.create_superuser(username=SUPERUSERNAME, email='', password=SUPERPW)
         return Response({"message": "successful database reset"})
     except subprocess.SubprocessError:
         return Response({"message": "internal error while resetting database"})
